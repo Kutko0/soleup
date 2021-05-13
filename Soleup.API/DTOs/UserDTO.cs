@@ -7,6 +7,12 @@ namespace Soleup.API.DTOs
 {
     public class UserDTO
     {
+        public int Id {get; set;} = -1;
+
+        [Required]
+        [MinLength(6, ErrorMessage = "field must be atleast 6 characters")]
+        [RegularExpression("^([\\w\\.\\-]+)@([\\w\\-]+)((\\.(\\w){2,3})+)$", ErrorMessage = "Must be email format.")]
+        public string Email { get; set; }
         [Required]
         [MinLength(4, ErrorMessage = "field must be atleast 4 characters")]
         public string First_Name { get; set; }
@@ -29,12 +35,21 @@ namespace Soleup.API.DTOs
             SHA512 shaM = new SHA512Managed();
             string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(this.Password)));
 
-            return new User{
+            User model = new User{
+                Email = this.Email,
                 First_Name = this.First_Name,
                 Last_Name = this.Last_Name,
                 Nickname = this.Nickname,
                 PasswordHashed = hashedPass
             };
+
+            // required to have id for editting for now, I don't like it, seems messy
+            // TODO: Find batter way to edit a user without relying on passing ID, maybe token would help
+            if(this.Id > -1) {
+                model.Id = this.Id;
+            }
+
+            return model;
         }
     }
 

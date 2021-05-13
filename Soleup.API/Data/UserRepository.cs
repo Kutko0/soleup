@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Soleup.API.Data
 {
@@ -32,14 +33,15 @@ namespace Soleup.API.Data
         {
             // get entity in DB based on parameter Id and update values
             User entity = await _context.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
+            // needed in order for Id to not be changed in Entry function which results in error
+            user.Id = entity.Id;
             if(entity != null) {
                 _context.Entry(entity).CurrentValues.SetValues(user);
                 await _context.SaveChangesAsync();
             }
 
-            // get the user again and check if values has changes and resolve based on that
-            entity = await _context.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
-            if(entity.Equals(user)) {
+            // Had to convert to Json object as when compared in raw form it was failing
+            if(JsonConvert.SerializeObject(entity).Equals(JsonConvert.SerializeObject(user))) {
                 return true;
             }else{
                 return false;
@@ -65,6 +67,28 @@ namespace Soleup.API.Data
                 return user;
             }else {
                 return null;
+            }
+        }
+
+        // Return true if email is in use, false otherwise
+        public async Task<bool> IsEmailInUse(string email)
+        {
+            var IsUsed = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if(IsUsed != null) {
+                return true;
+            }else {
+                return false;
+            }
+        }
+
+        // Return true if nickname is in use, false otherwise
+        public async Task<bool> IsNicknameInUse(string nickname)
+        {
+            var IsUsed = await _context.Users.FirstOrDefaultAsync(x => x.Nickname == nickname);
+            if(IsUsed != null) {
+                return true;
+            }else {
+                return false;
             }
         }
     }

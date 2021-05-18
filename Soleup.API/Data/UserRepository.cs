@@ -91,5 +91,14 @@ namespace Soleup.API.Data
                 return false;
             }
         }
+
+        public async Task<bool> IsUserPresent(int id)
+        {
+            User user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            if(user != null) {
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Soleup.API.Data;
+using Soleup.API.Data.RepositoryInterfaces;
 
 namespace Soleup.API
 {
@@ -30,6 +31,7 @@ namespace Soleup.API
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IPostRepository, PostRepository>();
             services.AddControllers();
             
         }

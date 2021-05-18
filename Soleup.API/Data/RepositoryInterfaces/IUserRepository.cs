@@ -14,5 +14,6 @@ namespace Soleup.API.Data
         Task<User> DeleteUserById(int id);
         Task<bool> IsEmailInUse(string email);
         Task<bool> IsNicknameInUse(string nickname);
+        Task<bool> IsUserPresent(int id);
     }
 }

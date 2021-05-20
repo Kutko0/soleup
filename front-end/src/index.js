@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import MarketplaceItem from './Components/marketplace-components/marketplace-item'
 import './index.css';
 import App from './App';
 import LoginScreen from './pages/LoginPage'
+import MarketplacePage from './pages/Marketplace'
+import MarketplaceAppBar from './Components/marketplace-components/marketplace-app-bar.js'
 
 ReactDOM.render(
     <div>
-      <LoginScreen />
+      <MarketplacePage />
     </div>
     ,
   document.getElementById('root')

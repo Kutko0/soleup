@@ -1,18 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Soleup.API.Data;
 using Soleup.API.DTOs;
 using Soleup.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Soleup.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AuthorizeAttribute]
     public class UserController : ControllerBase
     {
         /* TODO: 
@@ -28,6 +24,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("new")]
+        [AllowAnonymous]
         public IActionResult PostNewUser(UserDTO userdto)
         {
             // Check for required fields and field constrains

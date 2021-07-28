@@ -66,7 +66,6 @@ let MarketplaceNavigation = function(){
               </Typography>
             </CardContent>
               <Button>
-                help
               </Button>
         </Card>
     )

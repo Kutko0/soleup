@@ -12,7 +12,8 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     width: "250px",
-    marginLeft:"20px"
+    marginLeft:"20px",
+    borderRadius: 0
   },
   textField: {
     marginLeft: "20px",
@@ -38,14 +39,8 @@ let LoginScreen = function() {
   return (
   <div
   style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    color: "red"
-}}
+  }}
   >
-    <Paper variant="outlined" square className={classes.paper}>
       <Grid container spacing={1}>
         <Toolbar>
           <Typography variant="h5">SoleUP login Page</Typography>
@@ -86,7 +81,6 @@ let LoginScreen = function() {
           </Button>
         </Grid>
       </Grid>
-    </Paper>
   </div>
   );
 }

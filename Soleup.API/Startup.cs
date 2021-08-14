@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Soleup.API.Data;
 using Soleup.API.Data.RepositoryInterfaces;
+using Soleup.API.Services;
 
 namespace Soleup.API
 {
@@ -32,8 +33,9 @@ namespace Soleup.API
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddTokenAuthentication(Configuration);
             services.AddControllers();
-            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -30,7 +30,7 @@ namespace Soleup.API.DTOs
         public User _ConvertToModel() {
             // Adding salt to password string, this needs to be isolated and loaded form somewhere in production
             string salt = "soleupisthebest";
-            Password = Password + salt;
+            this.Password = Password + salt;
             //Converting string to bytes and hasing it with Sha512 and then encoding it to string 
             SHA512 shaM = new SHA512Managed();
             string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(this.Password)));

@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Soleup.API.Models
 {
     public class User
     {
+        [JsonIgnore]
         public int Id { get; set; }
         [Required]
         public string Email { get; set; }
@@ -14,6 +16,7 @@ namespace Soleup.API.Models
         [Required]
         public string Nickname { get; set; }
         [Required]
+        [JsonIgnore]
         public string PasswordHashed { get; set; }
         
     }

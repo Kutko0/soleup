@@ -8,10 +8,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
+using Soleup.API.Services;
 
 namespace Soleup.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -19,41 +23,46 @@ namespace Soleup.API.Controllers
             1. Find a way to check errors first and return message withh all errors,
             so when email and nickname are wrong user does not have to submit two times 
             for two different errors 
-            
         */
         private IUserRepository _repo;
-        public UserController(IUserRepository repo) {
+        private IConfiguration _config;  
+
+        public UserController(IUserRepository repo, IConfiguration config) {
             this._repo = repo;
+            this._config = config;
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("new")]
         public IActionResult PostNewUser(UserDTO userdto)
         {
             // Check for required fields and field constrains
             if (!ModelState.IsValid)
             {
-                return BadRequest(new {error = "Some required fields are not filled"} );
+                return BadRequest(new {errors = "Some required fields are not filled"} );
             }
             // Check if email is already used
             if(_repo.IsEmailInUse(userdto.Email).Result){
-                return BadRequest(new {error = "Email is already used."});
+                return BadRequest(new {errors = "Email is already used."});
             }
             // Check if nickname is already used
             if(_repo.IsNicknameInUse(userdto.Nickname).Result){
-                return BadRequest(new {error = "Nickname is already used."});
+                return BadRequest(new {errors = "Nickname is already used."});
             }
 
             User user = userdto._ConvertToModel();
             User saved = _repo.InsertNewUser(user);
 
+            var jwtMaker = new AuthTokenService(this._config);
+
             if (saved != null)
             {
-                return Ok(saved);
+                return Ok(new{ user = saved, token = jwtMaker.GenerateSecurityToken(saved.Email)});
             }
             else
             {
-                return BadRequest(new {error = "User has not been saved correctly."});
+                return BadRequest(new {errors = "User has not been saved correctly."});
             }
         }
 
@@ -73,24 +82,24 @@ namespace Soleup.API.Controllers
             }else{
                 current = _repo.GetUserById(userdto.Id).Result;
                 if(current == null) {
-                    return BadRequest(new {error = "Could not recognize user."});
+                    return BadRequest(new {errors = "Could not recognize user."});
                 }
             }
 
             // Check for required fields and field constrains
             if (!ModelState.IsValid)
             {
-                return BadRequest(new {error = "Some required fields are not filled"});
+                return BadRequest(new {errors = "Some required fields are not filled"});
             }
             // Check if email is already used
             if(_repo.IsEmailInUse(userdto.Email).Result &&
                 current.Email != userdto.Email){
-                return BadRequest(new {error = "Email is already used."});
+                return BadRequest(new {errors = "Email is already used."});
             }
             // Check if nickname is already used
             if(_repo.IsNicknameInUse(userdto.Nickname).Result &&
                 current.Nickname != userdto.Nickname){
-                return BadRequest(new {error = "Nickname is already used."});
+                return BadRequest(new {errors = "Nickname is already used."});
             }
 
             User user = userdto._ConvertToModel();
@@ -102,7 +111,7 @@ namespace Soleup.API.Controllers
             }
             else
             {
-                return BadRequest(new {error = "User has not been saved correctly."});
+                return BadRequest(new {errors = "User has not been saved correctly."});
             }
         }
 
@@ -118,7 +127,7 @@ namespace Soleup.API.Controllers
             }
             else
             {
-                return BadRequest(new {error = "User has not been found."});
+                return BadRequest(new {errors = "User has not been found."});
             }
         }
 
@@ -134,8 +143,32 @@ namespace Soleup.API.Controllers
             }
             else
             {
-                return BadRequest(new {error = "User has not been deleted correctly."});
+                return BadRequest(new {errors = "User has not been deleted correctly."});
             }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("login")]
+        public IActionResult PostLoginUser(LoginDTO login)
+        {
+            // Check for required fields and field constrains
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new {error = ModelState.SelectMany(x => x.Value.Errors)});
+            }
+
+            bool allowed = this._repo.LoginUser(login.email, login.password).Result;
+
+            if(allowed) {
+                AuthTokenService tokenGenerator = new AuthTokenService(this._config);
+                string token = tokenGenerator.GenerateSecurityToken(login.email);
+                User user = this._repo.GetUserByEmail(login.email).Result;
+
+                return Ok(new { token = token, user = user });
+            }
+
+            return BadRequest(new {errors = "Was not able to login."});
         }
     }
 }

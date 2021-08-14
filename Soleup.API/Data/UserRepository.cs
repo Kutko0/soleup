@@ -1,19 +1,21 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Soleup.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace Soleup.API.Data
 {
     public class UserRepository : IUserRepository
     {
         private DataContext _context;
-        public UserRepository(DataContext context)
+        private IConfiguration _config;
+        public UserRepository(DataContext context, IConfiguration config)
         {
             this._context = context;
+            this._config = config;
         }
         public async Task<User> DeleteUserById(int id)
         {
@@ -46,6 +48,16 @@ namespace Soleup.API.Data
             }else{
                 return false;
             }
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            User entity = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if(entity != null) {
+                return entity;
+            }
+            return null;
+
         }
 
         public async Task<User> GetUserById(int id)
@@ -99,6 +111,33 @@ namespace Soleup.API.Data
                 return true;
             }
             return false;
+        }
+
+        public async Task<bool> LoginUser(string email, string password)
+        {
+            bool emailCheck = await this.IsEmailInUse(email);
+            bool loggedIn = false;
+            if(emailCheck) {
+                User entity = await GetUserByEmail(email);
+                string generatedPass = this.GetHashedPassword(password);
+                loggedIn = generatedPass.Equals(entity.PasswordHashed);
+            }
+
+            return loggedIn;
+        }
+
+
+        // HELPER FUNCTIONS
+        public string GetHashedPassword(string password) {
+            // Getting salt from config
+            // TODO: load from env file in future
+            string salt = this._config.GetSection("PASSWORD_SALT").Value;
+            string toHashPassword = password + salt;
+
+            //Converting string to bytes and hasing it with Sha512 and then encoding it to string 
+            SHA512 shaM = new SHA512Managed();
+            string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(toHashPassword)));
+            return hashedPass;
         }
     }
 }

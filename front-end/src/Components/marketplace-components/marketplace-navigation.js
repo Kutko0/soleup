@@ -5,9 +5,15 @@ import { Container, Grid } from "@material-ui/core";
 import {Link} from 'react-router-dom';
 import PersonIcon from '@material-ui/icons/Person';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import React from 'react';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import LoginScreen from '../../pages/LoginPage';
+
+
 const useStyles = makeStyles((theme) => ({
     root: {
-      height: "170px",
+      height: "100px",
       marginTop: "10px",
       margin: "auto"
     },
@@ -19,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 14,
     },
     media: {
-      height: "250px",
+      height: "150px",
     },
     gridItem: {
       display:"flex",
@@ -30,8 +36,8 @@ const useStyles = makeStyles((theme) => ({
     },
     textDecor: {
       fontWeight: 'bold',
-      fontSize: 14,
-      fontFamily: 'ArialBlack'
+      fontSize: 12,
+      fontFamily: 'Oswald'
     },
     link: {
       textDecoration: 'none',
@@ -54,10 +60,19 @@ const useStyles = makeStyles((theme) => ({
 
 let MarketplaceNavigation = function(){
     const classes = useStyles()
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+      setOpen(true);
+    };
+
+    const handleClose = () => {
+      setOpen(false);
+    };
     return(
-        <Card className={classes.root}>
+        <div className={classes.root}>
             <CardActions>
-              <Typography variant="h3">
+              <Typography variant="h3" style={{fontFamily: 'Oswald', fontWeight: 'bold'}}>
                 SoleUP
               </Typography>
               <Grid container
@@ -94,15 +109,18 @@ let MarketplaceNavigation = function(){
                     </Typography>
                   </Link>
                 </Grid>
-                <Grid item className={classes.gridItem}>
+                <Grid item className={classes.gridItem} xs={6}>
                   <Link to="/fcfsRaffles" className={classes.link}>
                     <Typography className={classes.textDecor}>
                       FCFS RAFFLES
                     </Typography>
                   </Link>
                 </Grid>
+                <div className={classes.divider}></div>
                 <Grid item className={classes.gridItem} justify="end">
-                  <Button>
+                  <Button
+                    onClick={handleClickOpen}
+                  >
                     <PersonIcon></PersonIcon>
                   </Button>
                   <Button>
@@ -111,12 +129,14 @@ let MarketplaceNavigation = function(){
                 </Grid>
               </Grid>
             </CardActions>
-            <CardContent className={classes.center}>
-              <Typography className={classes.center} variant="h3">
-                READY TO SOLEUP?
-              </Typography>
-            </CardContent>
-        </Card>
+          <Dialog open={open} onClose={handleClose}>
+            <DialogContent
+              style={{height:'280px', width: "280px"}}
+              >
+              <LoginScreen></LoginScreen>
+            </DialogContent>
+          </Dialog>
+        </div>
     )
 }
 

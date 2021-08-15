@@ -8,6 +8,7 @@ import Home from "../Components/marketplace-components/home";
 import News from "../Components/marketplace-components/news";
 import Auctions from "../Components/marketplace-components/auctions";
 import FcfsRaffles from "../Components/marketplace-components/fcfs-raffles";
+import Footer from "../Components/marketplace-components/footer";
 const useStyles = makeStyles((theme) => ({
     root: {
       backgroundColor: "grey",
@@ -51,6 +52,7 @@ let MarketplacePage = function(){
           </Switch>
         </Container>
     </Router>
+    <Footer></Footer>
     </div>
     )
 

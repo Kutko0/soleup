@@ -6,10 +6,13 @@ import { CardActionArea, CardMedia } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      width: 280
+      width: 280,
+      border: "none",
+      boxShadow: "none"
     },
     title: {
-      fontSize: 14,
+      fontSize: 11.7,
+
     },
     media: {
       height: "250px",
@@ -25,14 +28,14 @@ let MarketplaceItem = function(){
                 <CardMedia
                   className={classes.media}
                   title="props.mediaName"
-                  image="https://storage.googleapis.com/bit-docs/bit-logo%402x.png"
+                  image="https://nl.kicksmaniac.com/zdjecia/2020/11/01/511/03/NIKE_AIR_JORDAN_4_RETRO_METALLIC_RED-mini.jpg"
                 >
                 </CardMedia>
-                <Typography variant="h5" component="h2">
-                    Product name
+                <Typography className={classes.title} color="textSecondary">
+                    NIKE AIR JORDAN 4 RETRO METALLIC RED
                 </Typography>
-                <Typography className={classes.title} color="textSecondary" gutterBottom>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry
+                <Typography variant="h6" gutterBottom style={{textAlign: "center"}}>
+                    250€
                 </Typography>
             </CardContent>
           </CardActionArea>

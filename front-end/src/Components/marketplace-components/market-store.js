@@ -20,39 +20,49 @@ const useStyles = makeStyles((theme) => ({
     },
     buttonStyle: {
       color: "#212121"
-    }
+    },
+    div: {
+      margin: "auto",
+      width: "1300px",
+      padding: "10px",
+      heigth: "1300px"
+
+     }
 
 }));
 
 let Market = function() {
-    const classes = makeStyles()
+    const classes = useStyles()
     return (
-        <div>
-          <Typography>Featured On Market</Typography>
-            <GridList>
-              <GridListTile key="Subheader" cols={2}>
-            <ListSubheader component="div"> Drips_Hub store </ListSubheader>
-          </GridListTile>
-          <GridListTile>
+        <div className={classes.div}>
+          <Typography>/ Preview of Drop Week 115</Typography>
+          <Typography>These are three of the seventy items that we will be dropping for RETAIL this Saturday. All kinds of hyped clothing and hyped sneaker brands for retail. A membership is required to participate in our weekly retail drops. Click on the membership page to purchase one or to find out when the next restock is happening!</Typography>
+          <Grid container>
+            <Grid item>
+              <MarketplaceItem></MarketplaceItem>
+            </Grid>
+            <Grid item>
+              <MarketplaceItem></MarketplaceItem>
+            </Grid>
+            <Grid item>
             <MarketplaceItem></MarketplaceItem>
+            </Grid>
+            <Grid item>
             <MarketplaceItem></MarketplaceItem>
-          </GridListTile>
-        </GridList>
-        <Box display="flex" justifyContent="center" height="50px">
-          <Button className={classes.buttonStyle}>Explore this store</Button>
-        </Box>
-        <GridList>
-          <GridListTile key="Subheader" cols={2}>
-            <ListSubheader component="div"> Week 5 FCFS Raffle </ListSubheader>
-          </GridListTile>
-          <GridListTile>
+            </Grid>
+            <Grid item>
             <MarketplaceItem></MarketplaceItem>
+            </Grid>
+            <Grid item>
             <MarketplaceItem></MarketplaceItem>
-          </GridListTile>
-        </GridList>
-        <Box display="flex" justifyContent="center" height="50px">
-          <Button className={classes.buttonStyle}>Explore this store</Button>
-        </Box>
+            </Grid>
+            <Grid item>
+            <MarketplaceItem></MarketplaceItem>
+            </Grid>
+            <Grid item>
+            <MarketplaceItem></MarketplaceItem>
+            </Grid>
+          </Grid>
 
         </div>
     )

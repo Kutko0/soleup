@@ -36,6 +36,9 @@ namespace Soleup.API
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddTokenAuthentication(Configuration);
             services.AddControllers();
+
+            // Register the Swagger services
+            services.AddSwaggerDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +54,10 @@ namespace Soleup.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseOpenApi();
+            
+            app.UseSwaggerUi3();
 
             app.UseEndpoints(endpoints =>
             {

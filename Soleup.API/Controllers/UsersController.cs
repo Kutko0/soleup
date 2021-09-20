@@ -23,6 +23,7 @@ namespace Soleup.API.Controllers
             1. Find a way to check errors first and return message withh all errors,
             so when email and nickname are wrong user does not have to submit two times 
             for two different errors 
+            https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-5.0
         */
         private IUserRepository _repo;
         private IConfiguration _config;  

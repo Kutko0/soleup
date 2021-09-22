@@ -5,7 +5,6 @@ namespace Soleup.API.Models
 {
     public class User
     {
-        [JsonIgnore]
         public int Id { get; set; }
         [Required]
         public string Email { get; set; }

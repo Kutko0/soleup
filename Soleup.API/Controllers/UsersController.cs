@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Soleup.API.Services;
+using System.ComponentModel;
 
 namespace Soleup.API.Controllers
 {
@@ -36,7 +37,7 @@ namespace Soleup.API.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("new")]
-        public IActionResult PostNewUser(UserDTO userdto)
+        public IActionResult PostNewUser([Description("Insert new User")]UserDTO userdto)
         {
             // Check for required fields and field constrains
             if (!ModelState.IsValid)

@@ -5,6 +5,7 @@ using Soleup.API.Data.RepositoryInterfaces;
 using Soleup.API.DTOs;
 using Soleup.API.Models;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Soleup.API.Controllers
 {
@@ -26,7 +27,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("new")]
-        public IActionResult PostNewPost(PostDTO postdto)
+        public IActionResult PostNewPost([Description("Body of the user's post as DTO")]PostDTO postdto)
         {
             // Check for required fields and field constrains
             if (!ModelState.IsValid)
@@ -54,7 +55,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("update")]
-        public IActionResult PostUpdatePost(PostDTO postdto)
+        public IActionResult PostUpdatePost([Description("Updated version of the post")]PostDTO postdto)
         {
             // Check for required fields and field constrains
             if (!ModelState.IsValid)
@@ -82,7 +83,7 @@ namespace Soleup.API.Controllers
 
         [HttpGet]
         [Route("get/{id}")]
-        public IActionResult GetReadPostById(int id)
+        public IActionResult GetReadPostById([Description("ID of the specific post that is to be returned")]int id)
         {
             Post post = _repo.GetPostById(id).Result;
             if(post != null) {
@@ -93,7 +94,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("remove/{id}")]
-        public IActionResult PostRemovePost(int id)
+        public IActionResult PostRemovePost([Description("ID of the specific post that is to be removed")]int id)
         {
             Post post = _repo.DeletePostById(id).Result;
             if(post != null) {
@@ -104,6 +105,7 @@ namespace Soleup.API.Controllers
 
         [HttpGet]
         [Route("types/all")]
+        [Description("Get all posible types of posts that can be inserted into DB")]
         public IActionResult GetAllPostTypes()
         {
             return Ok(_repo.GetPostTypes().Result);
@@ -111,7 +113,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("types/new")]
-        public IActionResult PostInsertPostType(PostTypeDTO type) {
+        public IActionResult PostInsertPostType([Description("Insert new post type")]PostTypeDTO type) {
             PostType saved = _repo.InsertPostType(type._ConvertToModel());
             if(saved != null) {
                 return Ok(saved);
@@ -122,7 +124,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("types/remove/{id}")]
-        public IActionResult PostRemovePostType(int id)
+        public IActionResult PostRemovePostType([Description("ID of the specific post type that is to be removed")]int id)
         {
             bool success = _repo.DeletePostTypeById(id).Result;
             if(success) {
@@ -133,7 +135,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("comment/remove/{id}")]
-        public IActionResult RemoveCommentById(int id){
+        public IActionResult RemoveCommentById([Description("ID of the specific comment that is to be removed")]int id){
             bool success = _repo.DeleteCommentById(id).Result;
             if(success) {
                 return Ok(new {success = "Comment deleted."});
@@ -143,7 +145,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("comment/update/")]
-        public IActionResult PostUpdateComment (CommentDTO comment){
+        public IActionResult PostUpdateComment ([Description("Updated body of the comment")]CommentDTO comment){
             if (!ModelState.IsValid)
             {
                 return BadRequest(new {error = "Some required fields are not filled."} );
@@ -159,14 +161,14 @@ namespace Soleup.API.Controllers
 
         [HttpGet]
         [Route("comment/user/{id}")]
-        public IActionResult GetCommentsByUserId(int id){
+        public IActionResult GetCommentsByUserId([Description("Get all comments from the user from his ID")]int id){
             IEnumerable<Comment> comments = _repo.GetCommentsByUserId(id);
             return Ok(comments);
         }
 
         [HttpGet]
         [Route("comment/{id}")]
-        public IActionResult GetCommentById(int id){
+        public IActionResult GetCommentById([Description("Get specific comment by it's ID")]int id){
             Comment comment = _repo.GetCommentById(id).Result;
             if(comment != null) {
                 return Ok(comment);
@@ -177,7 +179,7 @@ namespace Soleup.API.Controllers
 
         [HttpGet]
         [Route("complete/{id}")]
-        public IActionResult GetPostWithCommentsById(int id){
+        public IActionResult GetPostWithCommentsById([Description("Get post with all the comments by Post ID")]int id){
             Post post = _repo.GetPostById(id).Result;
             if(post != null) {
                 IEnumerable<Comment> comments = _repo.GetCommentsByPostId(post.Id);
@@ -190,7 +192,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("comment/new")]
-        public IActionResult PostInsertNewComment(CommentDTO comment){
+        public IActionResult PostInsertNewComment([Description("Insert new comment to Post")]CommentDTO comment){
             if (!ModelState.IsValid)
             {
                 return BadRequest(new {error = "Some required fields are not filled."} );

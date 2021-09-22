@@ -23,7 +23,7 @@ namespace Soleup.API.DTOs
                 Name = this.Name,
                 Description = this.Description,
                 UserId = this.UserId,
-                TypeId = this.Type,
+                PostTypeId = this.Type,
                 Created = DateTime.Now
             };
 

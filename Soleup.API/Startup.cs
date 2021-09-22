@@ -1,20 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Soleup.API.Data;
 using Soleup.API.Data.RepositoryInterfaces;
 using Soleup.API.Services;
+using NSwag;
+using NSwag.Generation.Processors.Security;
 
 namespace Soleup.API
 {
@@ -33,6 +28,7 @@ namespace Soleup.API
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<IDropsRepository, DropsRepository>();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddTokenAuthentication(Configuration);
             services.AddControllers();

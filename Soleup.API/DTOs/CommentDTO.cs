@@ -6,6 +6,8 @@ namespace Soleup.API.DTOs
 {
     public class CommentDTO
     {
+
+        // TODO: how do you distinguish 2 different comments on the same post from same user
         [Required]
         public int PostId { get; set; }
         [Required]

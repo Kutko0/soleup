@@ -19,5 +19,6 @@ namespace Soleup.API.Data.RepositoryInterfaces
         DropUser RemoveDropUserByEmail(string email);
         DropItem AssignDropUserToDropItem(string userToken, DropItem item);
         bool ResetDropSession();
+        bool IsUserEmailInserted(string email);
     }
 }

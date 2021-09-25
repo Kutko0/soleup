@@ -61,5 +61,29 @@ namespace Soleup.API.Controllers
             return Ok(new ResponseWithObject{ Message = "All items returned", Item = list});
         }
 
+        [HttpPost]
+        [Route("item/remove/{id}")]
+        [Description("Gets all drop items")]
+        public IActionResult PostRemoveDropItemById(int id)
+        {
+            bool removed = this._repo.RemoveDropItemById(id);
+            if(!removed) {
+                return BadRequest(new ResponseWithObject{ Message = "Item could not be removed", Item = removed});
+            }
+
+            return Ok(new ResponseWithObject{ Message = "Item removed", Item = removed});
+        }
+
+
+        [HttpPost]
+        [Route("admin/reset/session")]
+        [Description("Deletes all items from session, meaning all users and items gets deleted")]
+        public IActionResult PostResetSession()
+        {
+            bool removed = this._repo.ResetDropSession();
+
+            return Ok(new ResponseWithObject{ Message = "Session reseted, DB is clean", Item = removed});
+        }
+
     }
 }

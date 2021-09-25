@@ -17,7 +17,11 @@ namespace Soleup.API.Data
 
         public DropItem AssignDropUserToDropItem(string userToken, DropItem item)
         {
-            throw new System.NotImplementedException();
+            DropItem updated = this._context.DropItems.First(x => x.Id == item.Id);
+            updated.UserToken = userToken;
+
+            this._context.SaveChanges();
+            return updated;
         }
 
         public IEnumerable<DropItem> GetAllDropItems()
@@ -32,7 +36,15 @@ namespace Soleup.API.Data
 
         public IEnumerable<DropUser> GetAllDropUsersThatWonItem()
         {
-            throw new System.NotImplementedException();
+            List<DropItem> listOfItemsWithUser = this._context.DropItems.Where(x => x.UserToken != null).ToList();
+            List<DropUser> winners = new List<DropUser>();
+
+            foreach (var item in listOfItemsWithUser)
+            {
+                winners.Add(this._context.DropUsers.FirstOrDefault(x => x.Token == item.UserToken));    
+            }
+
+            return winners;
         }
 
         public IEnumerable<DropItem> GetAllTakenDropItems()
@@ -52,7 +64,7 @@ namespace Soleup.API.Data
 
         public DropUser GetDropUserByToken(string token)
         {
-            return this._context.DropUsers.Where(x => x.Token == token).FirstOrDefault();
+            return this._context.DropUsers.FirstOrDefault(x => x.Token == token);
         }
 
         public DropItem InsertDropItem(DropItem item)
@@ -80,22 +92,68 @@ namespace Soleup.API.Data
 
         public bool RemoveDropItemById(int id)
         {
-            throw new System.NotImplementedException();
+            DropItem item = this._context.DropItems.FirstOrDefault(x => x.Id == id);
+
+            if(item == null) {
+                return true;
+            }
+
+            this._context.DropItems.Remove(item);
+            int changes = this._context.SaveChanges();
+
+            if(changes > 0) {
+                return true;
+            }
+
+            return false;
         }
 
-        public DropUser RemoveDropUserByEmail(string email)
+        public bool RemoveDropUserByEmail(string email)
         {
-            throw new System.NotImplementedException();
+           DropUser user = this._context.DropUsers.FirstOrDefault(x => x.Email == email);
+
+            if(user == null) {
+                return true;
+            }
+
+            this._context.DropUsers.Remove(user);
+            int changes = this._context.SaveChanges();
+
+            if(changes > 0) {
+                return true;
+            }
+
+            return false;
         }
 
-        public DropUser RemoveDropUserById(int id)
+        public bool RemoveDropUserById(int id)
         {
-            throw new System.NotImplementedException();
+            DropUser user = this._context.DropUsers.FirstOrDefault(x => x.Id == id);
+
+            if(user == null) {
+                return true;
+            }
+
+            this._context.DropUsers.Remove(user);
+            int changes = this._context.SaveChanges();
+
+            if(changes > 0) {
+                return true;
+            }
+
+            return false;
         }
 
         public bool ResetDropSession()
         {
-            throw new System.NotImplementedException();
+            this._context.DropItems.RemoveRange(this._context.DropItems);
+            this._context.DropUsers.RemoveRange(this._context.DropUsers);
+            int changes = this._context.SaveChanges();
+
+            if(changes > 0) {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -15,8 +15,8 @@ namespace Soleup.API.Data.RepositoryInterfaces
         DropUser GetDropUserByEmail(string email);
         DropUser GetDropUserByToken(string token);
         DropUser InsertDropUser(DropUser user);
-        DropUser RemoveDropUserById(int id);
-        DropUser RemoveDropUserByEmail(string email);
+        bool RemoveDropUserById(int id);
+        bool RemoveDropUserByEmail(string email);
         DropItem AssignDropUserToDropItem(string userToken, DropItem item);
         bool ResetDropSession();
         bool IsUserEmailInserted(string email);

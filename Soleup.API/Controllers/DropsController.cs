@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Soleup.API.Data.RepositoryInterfaces;
 using Soleup.API.DTOs;
@@ -11,6 +13,7 @@ namespace Soleup.API.Controllers
     public class DropsController : ControllerBase
     {
         private IDropsRepository _repo { get; set; }
+        private string TOKEN_SALT = "SOLEUP_DROPS_SESH";
 
         public DropsController(IDropsRepository repo)
         {
@@ -30,6 +33,13 @@ namespace Soleup.API.Controllers
             if(this._repo.IsUserEmailInserted(user.Email)) 
             {
                 return BadRequest(new {error = "Email is already in database"} );
+            }
+
+            byte[] dataForToken = Encoding.UTF8.GetBytes(user.Email + TOKEN_SALT);
+
+            using (SHA512 shaM = new SHA512Managed())
+            {
+                user.Token = ToHex(shaM.ComputeHash(dataForToken), false);
             }
 
             var created = this._repo.InsertDropUser(user);
@@ -83,6 +93,55 @@ namespace Soleup.API.Controllers
             bool removed = this._repo.ResetDropSession();
 
             return Ok(new ResponseWithObject{ Message = "Session reseted, DB is clean", Item = removed});
+        }
+
+        [HttpPost]
+        [Route("user/enroll/{token}")]
+        [Description("Checks the validity of the token and returns user's data")]
+        public IActionResult PostEnrollToken(string token)
+        {
+            DropUser user = this._repo.GetDropUserByToken(token);
+
+            if(user != null) {
+                return Ok(new ResponseWithObject{ Message = "Token is valid", Item = user});
+            }
+
+            return BadRequest(new ResponseWithObject{ Message = "Token is invalid", Item = user});
+
+        }
+
+        [HttpPost]
+        [Route("user/remove/{id}")]
+        [Description("Removes user based on his ID")]
+        public IActionResult PostRemoveUserById(int id)
+        {
+            bool removed = this._repo.RemoveDropUserById(id);
+
+            if(removed) {
+                return Ok(new ResponseWithObject{ Message = "User was removed.", Item = removed});
+            }
+
+            return BadRequest(new ResponseWithObject{ Message = "User could not be removed.", Item = removed});
+
+        }
+
+
+
+
+        // HELPER FUNCTIONS
+        //-----------------
+        private bool SendAnEmailAfterRegistration(string email, string token) {
+            return true;
+        }
+
+        private string ToHex(byte[] bytes, bool upperCase)
+        {
+            StringBuilder result = new StringBuilder(bytes.Length * 2);
+
+            for (int i = 0; i < bytes.Length; i++)
+                result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
+
+            return result.ToString();
         }
 
     }

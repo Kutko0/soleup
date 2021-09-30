@@ -3,13 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Soleup.API.Data;
 using Soleup.API.Data.RepositoryInterfaces;
 using Soleup.API.Services;
-using NSwag;
-using NSwag.Generation.Processors.Security;
 
 namespace Soleup.API
 {
@@ -31,6 +28,7 @@ namespace Soleup.API
             services.AddScoped<IDropsRepository, DropsRepository>();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddTokenAuthentication(Configuration);
+            services.AddCors();
             services.AddControllers();
 
             // Register the Swagger services
@@ -46,6 +44,13 @@ namespace Soleup.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors(builder => builder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((host) => true)
+                .AllowCredentials()
+            );
 
             app.UseRouting();
 

@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'black',
     marginTop: "35px",
     height: 180,
+    width: "100%"
   },
    text: {
     color: "#999",
@@ -37,7 +38,7 @@ let Footer = function() {
                 CONTANT US
               </Typography>
               <Typography className={classes.text}>
-                Reach us at INSERTEMAIL@MAIL.COM You'll receive a reaction within 24 hours on weekdays from 9AM-6PM CEST.
+                Reach us at dripshub@gmail.com.
               </Typography>
             </div>
             </Grid>
@@ -47,7 +48,7 @@ let Footer = function() {
                 LINKS
               </Typography>
               <Typography className={classes.text}>
-                  Home
+                  Dripshub
               </Typography>
               <Typography className={classes.text}>
                   F.A.Q

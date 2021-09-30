@@ -1,6 +1,7 @@
 import { Card, CardActionArea, CardActions, CardContent, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { Container, Grid } from "@material-ui/core";
 import {Link} from 'react-router-dom';
 import PersonIcon from '@material-ui/icons/Person';
@@ -58,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+
 let MarketplaceNavigation = function(){
     const classes = useStyles()
     const [open, setOpen] = React.useState(false);
@@ -81,61 +83,16 @@ let MarketplaceNavigation = function(){
                 alignItems="center"
               >
                 <div className={classes.divider}></div>
-                <Grid item className={classes.gridItem}>
+                <Grid item  className={classes.gridItem}>
                   <Link to="/" className={classes.link}>
                     <Typography className={classes.textDecor}>
-                      HOME
-                    </Typography>
-                  </Link>
-                </Grid>
-                <Grid item  className={classes.gridItem}>
-                  <Link to="/market" className={classes.link}>
-                    <Typography className={classes.textDecor}>
-                      MARKET
-                    </Typography>
-                  </Link>
-                </Grid>
-                <Grid item className={classes.gridItem}>
-                  <Link to="/news" className={classes.link}>
-                    <Typography className={classes.textDecor}>
-                      NEWS
-                    </Typography>
-                  </Link>
-                </Grid>
-                <Grid item className={classes.gridItem}>
-                  <Link to="/auctions" className={classes.link}>
-                    <Typography className={classes.textDecor}>
-                      AUCTIONS
-                    </Typography>
-                  </Link>
-                </Grid>
-                <Grid item className={classes.gridItem} xs={6}>
-                  <Link to="/fcfsRaffles" className={classes.link}>
-                    <Typography className={classes.textDecor}>
-                      FCFS RAFFLES
+                      FCFS Raffles
                     </Typography>
                   </Link>
                 </Grid>
                 <div className={classes.divider}></div>
-                <Grid item className={classes.gridItem} justify="end">
-                  <Button
-                    onClick={handleClickOpen}
-                  >
-                    <PersonIcon></PersonIcon>
-                  </Button>
-                  <Button>
-                    <ShoppingCartIcon></ShoppingCartIcon>
-                  </Button>
-                </Grid>
               </Grid>
             </CardActions>
-          <Dialog open={open} onClose={handleClose}>
-            <DialogContent
-              style={{height:'280px', width: "280px"}}
-              >
-              <LoginScreen></LoginScreen>
-            </DialogContent>
-          </Dialog>
         </div>
     )
 }

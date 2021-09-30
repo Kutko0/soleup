@@ -2,12 +2,15 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import { CardActionArea, CardMedia } from '@material-ui/core';
+import { CardActionArea, CardActions, CardMedia } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      width: 280,
-      border: "none",
+      width: 270,
+      height: 360,
+      border: "outset",
+      borderWidth: "1px",
       boxShadow: "none"
     },
     title: {
@@ -17,28 +20,35 @@ const useStyles = makeStyles((theme) => ({
     media: {
       height: "250px",
     },
+    button: {
+      justifyContent: "right"
+    }
+
 
 }));
-let MarketplaceItem = function(){
+let MarketplaceItem = (props) => {
     const classes = useStyles()
     return(
+
         <Card className={classes.root}>
-          <CardActionArea>
+          
             <CardContent>
                 <CardMedia
                   className={classes.media}
-                  title="props.mediaName"
-                  image="https://nl.kicksmaniac.com/zdjecia/2020/11/01/511/03/NIKE_AIR_JORDAN_4_RETRO_METALLIC_RED-mini.jpg"
+                  title={props.title}
+                  image={props.image}
                 >
                 </CardMedia>
                 <Typography className={classes.title} color="textSecondary">
-                    NIKE AIR JORDAN 4 RETRO METALLIC RED
+                    {props.name}
                 </Typography>
-                <Typography variant="h6" gutterBottom style={{textAlign: "center"}}>
-                    250€
+                <Typography variant="h7" gutterBottom style={{textAlign: "left"}}>
+                    {props.price}
                 </Typography>
+                <CardActions className={classes.button}>
+                  <Button size="medium" > PURCHASE</Button>
+                </CardActions>
             </CardContent>
-          </CardActionArea>
         </Card>
     )
 }

@@ -9,6 +9,7 @@ import News from "../Components/marketplace-components/news";
 import Auctions from "../Components/marketplace-components/auctions";
 import FcfsRaffles from "../Components/marketplace-components/fcfs-raffles";
 import Footer from "../Components/marketplace-components/footer";
+import UserPage from "../Components/marketplace-components/user-page";
 const useStyles = makeStyles((theme) => ({
     root: {
       backgroundColor: "grey",
@@ -35,19 +36,7 @@ let MarketplacePage = function(){
         <Container maxWidth="100px">
           <Switch>
             <Route exact path="/">
-              <Home/>
-            </Route>
-            <Route path="/market">
               <Market/>
-            </Route>
-            <Route path="/news">
-              <News />
-            </Route>
-            <Route path="/auctions">
-              <Auctions />
-            </Route>
-            <Route path="/fcfsRaffles">
-              <FcfsRaffles />
             </Route>
           </Switch>
         </Container>

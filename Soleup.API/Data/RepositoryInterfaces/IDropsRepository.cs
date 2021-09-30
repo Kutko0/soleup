@@ -1,19 +1,20 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Soleup.API.Models;
 
 namespace Soleup.API.Data.RepositoryInterfaces
 {
     public interface IDropsRepository
     {
-        IEnumerable<DropItem> GetAllDropItems();
-        DropItem GetDropItemById(int id);
+        Task<IEnumerable<DropItem>> GetAllDropItems();
+        Task<DropItem> GetDropItemById(int id);
         bool RemoveDropItemById(int id);
         DropItem InsertDropItem(DropItem item);
         IEnumerable<DropItem> GetAllTakenDropItems();
         IEnumerable<DropUser> GetAllDropUsers();
         IEnumerable<DropUser> GetAllDropUsersThatWonItem();
-        DropUser GetDropUserByEmail(string email);
-        DropUser GetDropUserByToken(string token);
+        Task<DropUser> GetDropUserByEmail(string email);
+        Task<DropUser> GetDropUserByToken(string token);
         DropUser InsertDropUser(DropUser user);
         bool RemoveDropUserById(int id);
         bool RemoveDropUserByEmail(string email);

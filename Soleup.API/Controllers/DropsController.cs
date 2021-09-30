@@ -1,6 +1,11 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Soleup.API.Data.RepositoryInterfaces;
 using Soleup.API.DTOs;
@@ -14,6 +19,8 @@ namespace Soleup.API.Controllers
     {
         private IDropsRepository _repo { get; set; }
         private string TOKEN_SALT = "SOLEUP_DROPS_SESH";
+        private string SOLEUP_EMAIL_ADDRESS = "soleup@info.sk";
+        private readonly object locker = new Object(); 
 
         public DropsController(IDropsRepository repo)
         {
@@ -44,7 +51,17 @@ namespace Soleup.API.Controllers
 
             var created = this._repo.InsertDropUser(user);
 
+            SendConfirmationEmail(created.Email, created.Token, created.Instagram);
+
             return Ok(new ResponseWithObject{ Message = "User created", Item = created});
+        }
+
+        [HttpGet]
+        [Route("user/all")]
+        [Description("Gets all drop users")]
+        public IActionResult GetAllDropUsers() {
+            IEnumerable<DropUser> users = this._repo.GetAllDropUsers();
+            return Ok(new ResponseWithObject{Message = "All users returned", Item = users});
         }
 
         [HttpPost]
@@ -71,7 +88,7 @@ namespace Soleup.API.Controllers
             return Ok(new ResponseWithObject{ Message = "All items returned", Item = list});
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Route("item/remove/{id}")]
         [Description("Gets all drop items")]
         public IActionResult PostRemoveDropItemById(int id)
@@ -96,21 +113,62 @@ namespace Soleup.API.Controllers
         }
 
         [HttpPost]
+        [Route("admin/login")]
+        [Description("Logs in an admin in order to perform tasks")]
+        public IActionResult PostAdminLogin()
+        {
+            return Ok();
+        }
+
+        [HttpPost]
         [Route("user/enroll/{token}")]
         [Description("Checks the validity of the token and returns user's data")]
-        public IActionResult PostEnrollToken(string token)
+        public async Task<IActionResult> PostEnrollToken(string token)
         {
-            DropUser user = this._repo.GetDropUserByToken(token);
+            DropUser user = await this._repo.GetDropUserByToken(token);
 
             if(user != null) {
                 return Ok(new ResponseWithObject{ Message = "Token is valid", Item = user});
             }
 
             return BadRequest(new ResponseWithObject{ Message = "Token is invalid", Item = user});
-
         }
 
         [HttpPost]
+        [Route("item/take")]
+        [Description("Reserves item for user by token")]
+        public async Task<IActionResult> PostTakeItemByToken(TakeDropItem take)
+        {
+            System.Console.WriteLine(take.Token);
+            System.Console.WriteLine(take.Id);
+            DropUser user = await this._repo.GetDropUserByToken(take.Token);
+            DropItem item = await this._repo.GetDropItemById(take.Id);
+
+            if(user == null) {
+                return BadRequest(new ResponseWithObject{ Message = "User token is invalid", Item = false});
+            }
+
+            if(item == null) {
+                return BadRequest(new ResponseWithObject{ Message = "Item id is invalid", Item = false});
+            }
+
+            DropItem updated;
+            //Concurrency of taking the item
+            lock(locker) {
+                System.Threading.Thread.Sleep(10000);
+                
+                if(item.UserToken == null) {
+                    updated = this._repo.AssignDropUserToDropItem(take.Token, item);
+                }else{
+                    return BadRequest(new ResponseWithObject{ Message = "Item was already taken.", Item = false});
+                }
+            }
+
+            return Ok(new ResponseWithObject{ Message = "Item secured for user with token: " + take.Token, Item = updated});
+            
+        }
+
+        [HttpDelete]
         [Route("user/remove/{id}")]
         [Description("Removes user based on his ID")]
         public IActionResult PostRemoveUserById(int id)
@@ -130,7 +188,8 @@ namespace Soleup.API.Controllers
 
         // HELPER FUNCTIONS
         //-----------------
-        private bool SendAnEmailAfterRegistration(string email, string token) {
+        private bool SendAnEmailAfterRegistration(string email, string token) 
+        {
             return true;
         }
 
@@ -142,6 +201,30 @@ namespace Soleup.API.Controllers
                 result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
 
             return result.ToString();
+        }
+
+        private void SendConfirmationEmail(string email, string token, string insta_name) 
+        {
+            MailAddress to = new MailAddress(email);
+            MailAddress from = new MailAddress(SOLEUP_EMAIL_ADDRESS);
+            MailMessage message = new MailMessage(from, to);
+            message.Subject = "Confirmation for drop session";
+            message.Body = @"Hello " + insta_name + "\n" +
+                " click on this <a href='#" + token + "'>Link</a> at the time of the drop\n" + 
+                "You gona have some amount of time to grab your gear and then session ends.";
+            
+            SmtpClient client = new SmtpClient();
+            client.UseDefaultCredentials = true;
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.EnableSsl = false;
+
+            try{
+                client.Send(message);
+            }
+            catch(Exception e) {
+                System.Console.WriteLine(e.ToString());
+            }
         }
 
     }

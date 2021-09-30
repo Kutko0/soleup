@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Soleup.API.Data.RepositoryInterfaces;
 using Soleup.API.Models;
 
@@ -24,9 +26,9 @@ namespace Soleup.API.Data
             return updated;
         }
 
-        public IEnumerable<DropItem> GetAllDropItems()
+        public async Task<IEnumerable<DropItem>> GetAllDropItems()
         {
-            return this._context.DropItems.ToList();
+            return await this._context.DropItems.ToListAsync();
         }
 
         public IEnumerable<DropUser> GetAllDropUsers()
@@ -52,19 +54,19 @@ namespace Soleup.API.Data
             return this._context.DropItems.Where(x => x.UserToken != null).ToList();
         }
 
-        public DropItem GetDropItemById(int id)
+        public async Task<DropItem> GetDropItemById(int id)
         {
-            return this._context.DropItems.Where(x => x.Id == id).FirstOrDefault();
+            return await this._context.DropItems.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
-        public DropUser GetDropUserByEmail(string email)
+        public async Task<DropUser> GetDropUserByEmail(string email)
         {
-            return this._context.DropUsers.Where(x => x.Email == email).FirstOrDefault();
+            return await this._context.DropUsers.Where(x => x.Email == email).FirstOrDefaultAsync();
         }
 
-        public DropUser GetDropUserByToken(string token)
+        public async Task<DropUser> GetDropUserByToken(string token)
         {
-            return this._context.DropUsers.FirstOrDefault(x => x.Token == token);
+            return await this._context.DropUsers.FirstOrDefaultAsync(x => x.Token == token);
         }
 
         public DropItem InsertDropItem(DropItem item)

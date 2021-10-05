@@ -1,11 +1,6 @@
-import GridList from '@material-ui/core/GridList';
-import Button from '@material-ui/core/Button';
-import GridListTile from '@material-ui/core/GridListTile';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import MarketplaceItem from "../marketplace-components/marketplace-item"
-import Box from '@material-ui/core/Box';
-import { Container, Grid, ListSubheader } from "@material-ui/core"
+import { Container, Grid } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
     root: {

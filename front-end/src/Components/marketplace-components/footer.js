@@ -1,7 +1,7 @@
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { Paper, TextField } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -9,7 +9,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'black',
     marginTop: "35px",
     height: 180,
-    width: "100%"
+    width: "100%",
+    bottom: 0
   },
    text: {
     color: "#999",

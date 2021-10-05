@@ -1,18 +1,14 @@
-import MarketplaceAppBar from "../Components/marketplace-components/marketplace-app-bar"
 import { Container} from "@material-ui/core"
 import MarketplaceNavigation from "../Components/marketplace-components/marketplace-navigation"
 import { makeStyles } from '@material-ui/core/styles';
 import  Market  from '../Components/marketplace-components/market-store'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import Home from "../Components/marketplace-components/home";
-import News from "../Components/marketplace-components/news";
-import Auctions from "../Components/marketplace-components/auctions";
-import FcfsRaffles from "../Components/marketplace-components/fcfs-raffles";
 import Footer from "../Components/marketplace-components/footer";
-import UserPage from "../Components/marketplace-components/user-page";
+
 const useStyles = makeStyles((theme) => ({
     root: {
-      backgroundColor: "grey",
+      backgroundColor: "white",
+      alignContent: "center",
     },
     navigation: {
         marginLeft: "auto",
@@ -23,17 +19,22 @@ const useStyles = makeStyles((theme) => ({
     },
     buttonStyle: {
       color: "#212121"
+    },
+    footer: {
+      position: 'relative', //Here is the trick
+      width: "100%",
+      bottom: 0,
     }
 
 }));
 
 let MarketplacePage = function(){
-    const classes = makeStyles()
+    const classes = useStyles()
     return(
-    <div class={classes.root}>
+    <div className={classes.root}>
       <Router>
         <MarketplaceNavigation className={classes.navigation} />
-        <Container maxWidth="100px">
+        <Container>
           <Switch>
             <Route exact path="/">
               <Market/>
@@ -41,7 +42,9 @@ let MarketplacePage = function(){
           </Switch>
         </Container>
     </Router>
-    <Footer></Footer>
+    <div className={classes.footer}>
+      <Footer></Footer>
+    </div>
     </div>
     )
 

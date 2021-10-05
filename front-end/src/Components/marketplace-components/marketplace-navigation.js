@@ -1,16 +1,8 @@
-import { Card, CardActionArea, CardActions, CardContent, Typography } from "@material-ui/core"
+import {  CardActions, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import { Container, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import {Link} from 'react-router-dom';
-import PersonIcon from '@material-ui/icons/Person';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import React from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import LoginScreen from '../../pages/LoginPage';
-
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -62,15 +54,6 @@ const useStyles = makeStyles((theme) => ({
 
 let MarketplaceNavigation = function(){
     const classes = useStyles()
-    const [open, setOpen] = React.useState(false);
-
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
-
-    const handleClose = () => {
-      setOpen(false);
-    };
     return(
         <div className={classes.root}>
             <CardActions>
@@ -79,7 +62,7 @@ let MarketplaceNavigation = function(){
               </Typography>
               <Grid container
                 direction="row"
-                justify="left"
+                justify="flex-start"
                 alignItems="center"
               >
                 <div className={classes.divider}></div>

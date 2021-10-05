@@ -1,12 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import MarketplaceItem from './Components/marketplace-components/marketplace-item'
 import './index.css';
-import App from './App';
-import LoginScreen from './pages/LoginPage'
 import MarketplacePage from './pages/Marketplace'
-import MarketplaceAppBar from './Components/marketplace-components/marketplace-app-bar.js'
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+import {BrowserRouter as Router} from 'react-router-dom'
 
 ReactDOM.render(
   <Router>

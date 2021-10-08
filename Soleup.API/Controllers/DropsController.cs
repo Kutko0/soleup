@@ -154,6 +154,7 @@ namespace Soleup.API.Controllers
 
             DropItem updated;
             //Concurrency of taking the item
+            // TODO: update item props insisde lock 
             lock(locker) {
                 System.Threading.Thread.Sleep(10000);
                 
@@ -205,22 +206,34 @@ namespace Soleup.API.Controllers
 
         private void SendConfirmationEmail(string email, string token, string insta_name) 
         {
-            MailAddress to = new MailAddress(email);
-            MailAddress from = new MailAddress(SOLEUP_EMAIL_ADDRESS);
-            MailMessage message = new MailMessage(from, to);
-            message.Subject = "Confirmation for drop session";
-            message.Body = @"Hello " + insta_name + "\n" +
-                " click on this <a href='#" + token + "'>Link</a> at the time of the drop\n" + 
-                "You gona have some amount of time to grab your gear and then session ends.";
-            
-            SmtpClient client = new SmtpClient();
-            client.UseDefaultCredentials = true;
-            client.Host = "smtp.gmail.com";
-            client.Port = 587;
-            client.EnableSsl = false;
+            // TODO: Use SoleUp's credentials later from env file
+            // TODO: Set up trsutworthy server or add it somehow to list in order to not turn 
+            //       off less secure apps in GMAIL as that is not permanent solution
+            string fromMail = "";
+            string password = "";
 
+            MailMessage mail = new MailMessage();
+            mail.To.Add(new MailAddress(email));
+            mail.From = new MailAddress(fromMail);
+            mail.Subject = "Testing the email";
+
+            string Body = "<h1>Testing mail</h1>" + "<br> <p>Token <a href='#'>" + token + "</a>";
+            mail.Body = Body;
+            mail.IsBodyHtml = true;
+
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "smtp.gmail.com"; //Or Your SMTP Server Address
+            smtp.Port = 587;
+            smtp.UseDefaultCredentials = false;
+            smtp.EnableSsl = true;
+            // needs to be turned on
+            // TODO: Put credentils into env file
+            // PUT mail and pass here
+            smtp.Credentials = new System.Net.NetworkCredential
+                (fromMail, password);
+            
             try{
-                client.Send(message);
+                smtp.Send(mail);
             }
             catch(Exception e) {
                 System.Console.WriteLine(e.ToString());

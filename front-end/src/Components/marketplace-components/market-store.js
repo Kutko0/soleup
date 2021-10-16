@@ -4,6 +4,7 @@ import MarketplaceItem from "../marketplace-components/marketplace-item"
 import {Grid} from "@material-ui/core"
 import axios from "axios";
 import {useEffect, useState} from "react";
+import {GET_ALL_DROP_ITEMS} from "../../apiCalls/apiUrl.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -37,68 +38,10 @@ const useStyles = makeStyles((theme) => ({
 //let Market = function()
 let Market = () => {
   let style = useStyles();
-  let props = [
-    {
-      id: 0,
-      title: "123",
-      image: "https://sk.basketzone.net/zdjecia/2020/06/22/706/07/NIKE_AIR_JORDAN_1_RETRO_MID_CHICAGO.jpg",
-      name: "Air jordans, Air jordans",
-      price: "299.00€"
-    },
-    {
-      id: 1,
-      title: "123",
-      image: "https://sk.basketzone.net/zdjecia/2020/06/22/706/07/NIKE_AIR_JORDAN_1_RETRO_MID_CHICAGO.jpg",
-      name: "Air jordans",
-      price: "299.00€"
-    },
-    {
-      id: 2,
-      title: "123",
-      image: "https://sk.basketzone.net/zdjecia/2020/06/22/706/07/NIKE_AIR_JORDAN_1_RETRO_MID_CHICAGO.jpg",
-      name: "Air jordans",
-      price: "299.00€"
-    },
-    {
-      id: 3,
-      title: "123",
-      image: "https://sk.basketzone.net/zdjecia/2020/06/22/706/07/NIKE_AIR_JORDAN_1_RETRO_MID_CHICAGO.jpg",
-      name: "Air jordans",
-      price: "299.00€"
-    },
-    {
-      id: 4,
-      title: "123",
-      image: "https://sk.basketzone.net/zdjecia/2020/06/22/706/07/NIKE_AIR_JORDAN_1_RETRO_MID_CHICAGO.jpg",
-      name: "Air jordans",
-      price: "299.00€"
-    },
-    {
-      id: 5,
-      title: "123",
-      image: "https://sk.basketzone.net/zdjecia/2020/06/22/706/07/NIKE_AIR_JORDAN_1_RETRO_MID_CHICAGO.jpg",
-      name: "Air jordans",
-      price: "299.00€"
-    },
-    {
-      id: 6,
-      title: "123",
-      image: "https://sk.basketzone.net/zdjecia/2020/06/22/706/07/NIKE_AIR_JORDAN_1_RETRO_MID_CHICAGO.jpg",
-      name: "Air jordans",
-      price: "299.00€"
-    },
-    {
-      id: 7,
-      title: "123",
-      image: "https://sk.basketzone.net/zdjecia/2020/06/22/706/07/NIKE_AIR_JORDAN_1_RETRO_MID_CHICAGO.jpg",
-      name: "Air jordans",
-      price: "299.00€"
-    },
-  ]
-  const url = "http://localhost:5000/api/Drops/item/all"
+  //const url = "http://localhost:5000/api/Drops/item/all"
   const [items, setItems] = useState([]);
   useEffect(() => {
-    axios.get(url, {
+    axios.get(GET_ALL_DROP_ITEMS, {
       headers: {
         'Access-Control-Allow-Origin': 'localhost:5000'
       }

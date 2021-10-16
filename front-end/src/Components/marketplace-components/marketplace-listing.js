@@ -25,8 +25,10 @@ let MarketplaceItem = (props) => {
     return(
         <div>
             <Paper>
-                <CardMedia>
-                    
+                <CardMedia
+                  image={props.pictureUrl}
+                >
+
                 </CardMedia>
             </Paper>
         </div>

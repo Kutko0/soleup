@@ -4,7 +4,8 @@ import MarketplaceItem from "../marketplace-components/marketplace-item"
 import {Grid} from "@material-ui/core"
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {GET_ALL_DROP_ITEMS} from "../../apiCalls/apiUrl.js";
+import {GET_ALL_DROP_ITEMS, POST_DROP_USER_ENROLL} from "../../apiCalls/apiUrl.js";
+//import {checkToken} from "../../apiCalls/apiUrl.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,9 +35,8 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-
 //let Market = function()
-let Market = () => {
+let Market = (props) => {
   let style = useStyles();
   //const url = "http://localhost:5000/api/Drops/item/all"
   const [items, setItems] = useState([]);
@@ -62,7 +62,7 @@ let Market = () => {
           <Grid container spacing={4} className={style.grid}>
               {items.map((gridItem) =>(
                 <Grid item>
-                  <MarketplaceItem key={gridItem.key} {... gridItem}></MarketplaceItem>
+                  <MarketplaceItem key={gridItem.key} {... gridItem} blockButtonToken={props.location}></MarketplaceItem>
                 </Grid>
               ))}
           </Grid>

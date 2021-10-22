@@ -6,18 +6,17 @@ import { CardActions, CardMedia, DialogContent } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import axios from 'axios';
-import { POST_DROP_ITEM_TAKE } from "../../apiCalls/apiUrl.js";
+import { POST_DROP_ITEM_TAKE, GET_ALL_DROP_USERS, POST_DROP_USER_ENROLL, checkToken } from "../../apiCalls/apiUrl.js";
+import {useLocation} from 'react-router-dom';
 import Snackbar from '@material-ui/core/Snackbar';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles((theme) => ({
     /**
-     * Creates local styles that can be used with components, still figuring out how to make global components.
+     * Creates local styles that can be used with components, still figuring out how to make global styles.
      */
     root: {
       width: 270,
@@ -46,28 +45,32 @@ const useStyles = makeStyles((theme) => ({
     },
     dialogMedia: {
       width: 500,
-      height: 500,
+      height: 450,
     },
     divCard: {
       height: 700,
     }
 
 }));
-let MarketplaceItem = (props) => {
-    const classes = useStyles()
-    const testToken = "9680c79223ab346e8326bc3216fa4ecbd4b43dc0c68993964a93dde5180f98210649dde017d4ac485e4f1282065ef68143dd22603e532c23399cf6207f594284";
+const tokenValidity = function() {
 
+}
+let MarketplaceItem = (props) => {
+    //console.debug(useLocation())
+    const classes = useStyles()
+    const testToken = props.blockButtonToken;
     /**
      * React Hooks
      * these constants create a single variable that can be changed dynamically React.useState() can take any params string, boolean, array .. etc,
      * after creation the variable can be changed by using the function provided(setState, showBar, changeMessage..).
      */
     const [openSnackbar, setState] = React.useState(false);
+    const [allTokens, setTokens] = React.useState([]);
     const [showLinearProgress, showBar] = React.useState(false);
     const [displayMessage, changeMessage] = React.useState("");
-    const [disableBuyButton, changeButtonState] = React.useState(true);
-    //should defaultly be set to false, and enabled after the user verifies their token.
     const [open, setOpen] = React.useState(false);
+    //should defaultly be set to true, and enabled after the user verifies their token For testing purposes set to false
+    const [disableBuyButton, changeButtonState] = React.useState(true);
 
     //simplified functions from hooks, can be used in components
     const handleCloseSnackbar = () => {
@@ -80,6 +83,30 @@ let MarketplaceItem = (props) => {
     const handleClose = () => {
       setOpen(false);
     };
+    const changeButton = () => {
+      changeButtonState(true);
+    }
+
+    React.useEffect(() => {
+      axios.post(POST_DROP_USER_ENROLL + "/" + testToken,
+      {
+        headers: {
+          'Access-Control-Allow-Origin': 'localhost:5000'
+        }
+      }
+      )
+      .then((response) => {
+        if(response.data.item.token == testToken){
+          changeButtonState(false)
+        }
+        //setTokens(response.data.item);
+        //changeButtonState(true);
+        //return 0;
+      })
+      .catch((error) => {
+        console.debug(error)
+      })
+    }, [])
 
     /**
      * POST_DROP_ITEM_TAKE Api call, sends a payload with the item id and users token, if the user didn't buy anything and the item is available
@@ -97,6 +124,7 @@ let MarketplaceItem = (props) => {
           changeMessage("You will receive an email regarding the item you selected, congrats");
           setState(true);
           showBar(false);
+          //
         })
         .catch(error => {
           console.log(error.response.data.message)

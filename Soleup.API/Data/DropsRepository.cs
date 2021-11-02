@@ -69,6 +69,12 @@ namespace Soleup.API.Data
             return await this._context.DropUsers.FirstOrDefaultAsync(x => x.Token == token);
         }
 
+        public bool HasUserItem(int id)
+        {
+            var user = this._context.DropUsers.FirstOrDefault(x => x.Id == id);
+            return this._context.DropItems.FirstOrDefault(x => x.UserToken == user.Token) != null;
+        }
+
         public DropItem InsertDropItem(DropItem item)
         {
             this._context.Add(item);

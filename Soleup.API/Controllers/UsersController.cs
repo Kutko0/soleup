@@ -60,7 +60,7 @@ namespace Soleup.API.Controllers
 
             if (saved != null)
             {
-                return Ok(new{ user = saved, token = jwtMaker.GenerateSecurityToken(saved.Email)});
+                return Ok(new{ user = saved, token = jwtMaker.GenerateSecurityToken(saved.Email, false)});
             }
             else
             {
@@ -164,7 +164,7 @@ namespace Soleup.API.Controllers
 
             if(allowed) {
                 AuthTokenService tokenGenerator = new AuthTokenService(this._config);
-                string token = tokenGenerator.GenerateSecurityToken(login.email);
+                string token = tokenGenerator.GenerateSecurityToken(login.email, false);
                 User user = this._repo.GetUserByEmail(login.email).Result;
 
                 return Ok(new { token = token, user = user });

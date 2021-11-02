@@ -18,19 +18,25 @@ namespace Soleup.API.Services
             _expDate = config.GetSection("AuthTokenConfig").GetSection("EXPIRES_IN_HOUR").Value;  
         }  
   
-        public string GenerateSecurityToken(string email)  
+        public string GenerateSecurityToken(string email, bool admin)  
         {  
+            ClaimsIdentity claims =  new ClaimsIdentity(new[] {  
+                                        new Claim(ClaimTypes.Email, email)  
+                                    });
+            if(admin) {
+                claims.AddClaim(new Claim("admin_allowed_in", admin.ToString()));
+            }
+
             var tokenHandler = new JwtSecurityTokenHandler();  
             var key = Encoding.ASCII.GetBytes(_secret);  
             var tokenDescriptor = new SecurityTokenDescriptor  
             {  
-                Subject = new ClaimsIdentity(new[]  
-                {  
-                    new Claim(ClaimTypes.Email, email)  
-                }),  
+                Subject = claims,  
                 Expires = DateTime.UtcNow.AddMinutes(double.Parse(_expDate)),  
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)  
             };  
+
+            
   
             var token = tokenHandler.CreateToken(tokenDescriptor);  
   

@@ -20,7 +20,7 @@ namespace Soleup.API.Controllers
         private IDropsRepository _repo { get; set; }
         private string TOKEN_SALT = "SOLEUP_DROPS_SESH";
         private string SOLEUP_EMAIL_ADDRESS = "soleup@info.sk";
-        private readonly object locker = new Object(); 
+        private static readonly object locker = new Object(); 
 
         public DropsController(IDropsRepository repo)
         {
@@ -51,7 +51,7 @@ namespace Soleup.API.Controllers
 
             var created = this._repo.InsertDropUser(user);
 
-            SendConfirmationEmail(created.Email, created.Token, created.Instagram);
+            //SendConfirmationEmail(created.Email, created.Token, created.Instagram);
 
             return Ok(new ResponseWithObject{ Message = "User created", Item = created});
         }
@@ -115,8 +115,12 @@ namespace Soleup.API.Controllers
         [HttpPost]
         [Route("admin/login")]
         [Description("Logs in an admin in order to perform tasks")]
-        public IActionResult PostAdminLogin()
+        public IActionResult PostAdminLogin(string name, string password)
         {
+            // User user object for logging, add admin field to distinguish
+            // Check if user token has valid subject based on admin field
+            // return token and Ok 200
+
             return Ok();
         }
 
@@ -137,35 +141,33 @@ namespace Soleup.API.Controllers
         [HttpPost]
         [Route("item/take")]
         [Description("Reserves item for user by token")]
-        public async Task<IActionResult> PostTakeItemByToken(TakeDropItem take)
+        public IActionResult PostTakeItemByToken(TakeDropItem take)
         {
-            System.Console.WriteLine(take.Token);
-            System.Console.WriteLine(take.Id);
-            DropUser user = await this._repo.GetDropUserByToken(take.Token);
-            DropItem item = await this._repo.GetDropItemById(take.Id);
-
-            if(user == null) {
-                return BadRequest(new ResponseWithObject{ Message = "User token is invalid", Item = false});
-            }
-
-            if(item == null) {
-                return BadRequest(new ResponseWithObject{ Message = "Item id is invalid", Item = false});
-            }
-
-            DropItem updated;
-            //Concurrency of taking the item
-            // TODO: update item props insisde lock 
             lock(locker) {
-                System.Threading.Thread.Sleep(10000);
+                DropUser user = this._repo.GetDropUserByToken(take.Token).Result;
+                DropItem item = this._repo.GetDropItemById(take.Id).Result;
+                DropItem updated;
+
+                if(user == null) {
+                    return BadRequest(new ResponseWithObject{ Message = "User token is invalid", Item = false});
+                }
+
+                if(this._repo.HasUserItem(user.Id)) {
+                    return BadRequest(new ResponseWithObject{ Message = "Item taken *wink", Item = false});
+                }
+                
+                if(item == null) {
+                    return BadRequest(new ResponseWithObject{ Message = "Item id is invalid", Item = false});
+                }
                 
                 if(item.UserToken == null) {
                     updated = this._repo.AssignDropUserToDropItem(take.Token, item);
                 }else{
                     return BadRequest(new ResponseWithObject{ Message = "Item was already taken.", Item = false});
                 }
-            }
 
-            return Ok(new ResponseWithObject{ Message = "Item secured for user with token: " + take.Token, Item = updated});
+                return Ok(new ResponseWithObject{ Message = "Item secured for user with token: " + take.Token, Item = updated});
+        }
             
         }
 

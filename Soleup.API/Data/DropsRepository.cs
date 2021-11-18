@@ -26,6 +26,12 @@ namespace Soleup.API.Data
             return updated;
         }
 
+        public DropAdmin DropAdminLogin(string name, string hashedPassword)
+        {
+            DropAdmin admin = this._context.DropAdmins.FirstOrDefault(x => x.Name == name && x.PasswordHashed == hashedPassword);
+            return admin;
+        }
+
         public async Task<IEnumerable<DropItem>> GetAllDropItems()
         {
             return await this._context.DropItems.ToListAsync();
@@ -75,6 +81,13 @@ namespace Soleup.API.Data
             return this._context.DropItems.FirstOrDefault(x => x.UserToken == user.Token) != null;
         }
 
+        public DropAdmin InsertDropAdmin(DropAdmin admin)
+        {
+            this._context.Add(admin);
+            this._context.SaveChanges();
+            return admin;
+        }
+
         public DropItem InsertDropItem(DropItem item)
         {
             this._context.Add(item);
@@ -96,6 +109,15 @@ namespace Soleup.API.Data
                 return true;
             }
             return false;
+        }
+
+        public bool RemoveDropAdmin(string name, string hashedPassword)
+        {
+            DropAdmin admin = this._context.DropAdmins.FirstOrDefault(x => x.Name == name && x.PasswordHashed == hashedPassword);
+            this._context.DropAdmins.Remove(admin);
+            int changes = this._context.SaveChanges();
+
+            return changes > 0 ? true: false;
         }
 
         public bool RemoveDropItemById(int id)

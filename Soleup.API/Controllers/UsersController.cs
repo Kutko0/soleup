@@ -1,13 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Soleup.API.Data;
 using Soleup.API.DTOs;
 using Soleup.API.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Soleup.API.Services;
@@ -25,6 +20,7 @@ namespace Soleup.API.Controllers
             so when email and nickname are wrong user does not have to submit two times 
             for two different errors 
             https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-5.0
+            2. User edit should be based on jwt and not this retarded version with -1 id in modeldto
         */
         private IUserRepository _repo;
         private IConfiguration _config;  

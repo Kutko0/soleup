@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Soleup.API.Data;
 using Soleup.API.Data.RepositoryInterfaces;
 using Soleup.API.Services;
+using dotenv.net;
 
 namespace Soleup.API
 {
@@ -64,6 +65,8 @@ namespace Soleup.API
             {
                 endpoints.MapControllers();
             });
+
+            DotEnv.Load();
         }
     }
 }

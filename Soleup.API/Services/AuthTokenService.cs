@@ -2,6 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using dotenv.net;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,10 +12,14 @@ namespace Soleup.API.Services
     {
         private readonly string _secret;  
         private readonly string _expDate;  
+        private string _issuer;
+	    private string _audience;
   
         public AuthTokenService(IConfiguration config)  
         {  
-            _secret = config.GetSection("AuthTokenConfig").GetSection("SECRET").Value;  
+            _secret = DotEnv.Read()["TOKEN_SECRET"];  
+            _issuer = DotEnv.Read()["ISSUER_LOCAL"];
+            _audience = DotEnv.Read()["AUDIENCE_LOCAL"];
             _expDate = config.GetSection("AuthTokenConfig").GetSection("EXPIRES_IN_HOUR").Value;  
         }  
   
@@ -33,10 +38,10 @@ namespace Soleup.API.Services
             {  
                 Subject = claims,  
                 Expires = DateTime.UtcNow.AddMinutes(double.Parse(_expDate)),  
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)  
-            };  
-
-            
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature) ,
+                Issuer = _issuer,
+                Audience = _audience 
+            };    
   
             var token = tokenHandler.CreateToken(tokenDescriptor);  
   

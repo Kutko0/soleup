@@ -2,7 +2,8 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;  
 using Microsoft.Extensions.Configuration;  
 using Microsoft.Extensions.DependencyInjection;  
-using Microsoft.AspNetCore.Authentication.JwtBearer;  
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using dotenv.net;
 
 namespace Soleup.API.Services
 {
@@ -10,9 +11,11 @@ namespace Soleup.API.Services
     {  
         public static IServiceCollection AddTokenAuthentication(this IServiceCollection services, IConfiguration config)  
         {  
-            var secret = config.GetSection("AuthTokenConfig").GetSection("SECRET").Value;  
+            string secret = DotEnv.Read()["TOKEN_SECRET"];  
+            byte[] key = Encoding.ASCII.GetBytes(secret);  
+            string _issuer = DotEnv.Read()["ISSUER_LOCAL"];
+    	    string _audience = DotEnv.Read()["ISSUER_LOCAL"];
   
-            var key = Encoding.ASCII.GetBytes(secret);  
             services.AddAuthentication(x =>  
             {  
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;  
@@ -23,12 +26,12 @@ namespace Soleup.API.Services
                 x.TokenValidationParameters = new TokenValidationParameters  
                 {  
                     IssuerSigningKey = new SymmetricSecurityKey(key),  
+                    ValidateIssuerSigningKey = true,
                     ValidateIssuer = true,  
                     ValidateAudience = true,  
                     ValidIssuer = "localhost",  
                     ValidAudience = "localhost"  
                 };  
-                // TODO: Make a env file to distinguish development and production
             });  
   
             return services;  

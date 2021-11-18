@@ -1,30 +1,40 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using dotenv.net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Soleup.API.Data.RepositoryInterfaces;
 using Soleup.API.DTOs;
 using Soleup.API.Models;
+using Soleup.API.Services;
 
 namespace Soleup.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes="Bearer")]
     public class DropsController : ControllerBase
     {
         private IDropsRepository _repo { get; set; }
-        private string TOKEN_SALT = "SOLEUP_DROPS_SESH";
-        private string SOLEUP_EMAIL_ADDRESS = "soleup@info.sk";
+        private IConfiguration _config;  
+        private string TOKEN_SECRET;
+        private string SOLEUP_EMAIL_ADDRESS;
         private static readonly object locker = new Object(); 
 
-        public DropsController(IDropsRepository repo)
+        public DropsController(IDropsRepository repo, IConfiguration config)
         {
             this._repo = repo;
+            this._config = config;
+            this.TOKEN_SECRET = DotEnv.Read()["TOKEN_SECRET"];
+            this.SOLEUP_EMAIL_ADDRESS = DotEnv.Read()["SOLEUP_EMAIL_ADDRESS"];
         }
 
         [HttpPost]
@@ -42,7 +52,7 @@ namespace Soleup.API.Controllers
                 return BadRequest(new {error = "Email is already in database"} );
             }
 
-            byte[] dataForToken = Encoding.UTF8.GetBytes(user.Email + TOKEN_SALT);
+            byte[] dataForToken = Encoding.UTF8.GetBytes(user.Email + TOKEN_SECRET);
 
             using (SHA512 shaM = new SHA512Managed())
             {
@@ -51,6 +61,7 @@ namespace Soleup.API.Controllers
 
             var created = this._repo.InsertDropUser(user);
 
+            // TODO: finish emails to work on server side
             //SendConfirmationEmail(created.Email, created.Token, created.Instagram);
 
             return Ok(new ResponseWithObject{ Message = "User created", Item = created});
@@ -107,6 +118,7 @@ namespace Soleup.API.Controllers
         [Description("Deletes all items from session, meaning all users and items gets deleted")]
         public IActionResult PostResetSession()
         {
+            this.IsAdmin();
             bool removed = this._repo.ResetDropSession();
 
             return Ok(new ResponseWithObject{ Message = "Session reseted, DB is clean", Item = removed});
@@ -117,11 +129,40 @@ namespace Soleup.API.Controllers
         [Description("Logs in an admin in order to perform tasks")]
         public IActionResult PostAdminLogin(string name, string password)
         {
-            // User user object for logging, add admin field to distinguish
-            // Check if user token has valid subject based on admin field
-            // return token and Ok 200
+            password = password + DotEnv.Read()["SALT_PASS"];
+            SHA512 shaM = new SHA512Managed();
+            string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(password)));
 
-            return Ok();
+            DropAdmin admin = this._repo.DropAdminLogin(name, hashedPass);
+            if(admin == null) {
+                return BadRequest(new ResponseWithObject{ Message = "Incorrect admin login"});
+            }
+
+            AuthTokenService tokenGenerator = new AuthTokenService(this._config);
+            string token = tokenGenerator.GenerateSecurityToken(name, true);
+
+            return Ok(new ResponseWithObject{ Message = "Admin logged in succesfully", Item = admin, JwtToken = token});
+        }
+
+        [HttpPost]
+        [Route("admin/login/initiate")]
+        [Description("Used for making initial admin account, afterwards this method will be removed in production")]
+        public IActionResult PostAdminLoginMock()
+        {
+            string password = "!ILoveMyDropsWithDrips74" + DotEnv.Read()["SALT_PASS"];
+            SHA512 shaM = new SHA512Managed();
+            string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(password)));
+
+            DropAdmin admin = new DropAdmin{
+                Name = "admin",
+                PasswordHashed = hashedPass
+            };
+            admin = this._repo.InsertDropAdmin(admin);
+
+            AuthTokenService tokenGenerator = new AuthTokenService(this._config);
+            string token = tokenGenerator.GenerateSecurityToken("admin", true);
+
+            return Ok(new ResponseWithObject{ Message = "Admin logged in succesfully", Item = admin});
         }
 
         [HttpPost]
@@ -149,26 +190,25 @@ namespace Soleup.API.Controllers
                 DropItem updated;
 
                 if(user == null) {
-                    return BadRequest(new ResponseWithObject{ Message = "User token is invalid", Item = false});
+                    return BadRequest(new ResponseWithObject{ Message = "User token is invalid"});
                 }
 
                 if(this._repo.HasUserItem(user.Id)) {
-                    return BadRequest(new ResponseWithObject{ Message = "Item taken *wink", Item = false});
+                    return BadRequest(new ResponseWithObject{ Message = "Item taken *wink"});
                 }
                 
                 if(item == null) {
-                    return BadRequest(new ResponseWithObject{ Message = "Item id is invalid", Item = false});
+                    return BadRequest(new ResponseWithObject{ Message = "Item id is invalid"});
                 }
                 
                 if(item.UserToken == null) {
                     updated = this._repo.AssignDropUserToDropItem(take.Token, item);
                 }else{
-                    return BadRequest(new ResponseWithObject{ Message = "Item was already taken.", Item = false});
+                    return BadRequest(new ResponseWithObject{ Message = "Item was already taken."});
                 }
 
                 return Ok(new ResponseWithObject{ Message = "Item secured for user with token: " + take.Token, Item = updated});
-        }
-            
+            }
         }
 
         [HttpDelete]
@@ -185,9 +225,6 @@ namespace Soleup.API.Controllers
             return BadRequest(new ResponseWithObject{ Message = "User could not be removed.", Item = removed});
 
         }
-
-
-
 
         // HELPER FUNCTIONS
         //-----------------
@@ -240,6 +277,23 @@ namespace Soleup.API.Controllers
             catch(Exception e) {
                 System.Console.WriteLine(e.ToString());
             }
+        }
+
+        private bool IsAdmin() {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            var UserClaims = ClaimsPrincipal.Current.Identities.First().Claims.ToList();
+            System.Console.WriteLine(UserClaims.FirstOrDefault( x => x.Type.Equals("admin_allowed_in")).Value);
+
+            if (identity != null)
+            {
+                IEnumerable<Claim> claims = identity.Claims;
+                foreach (var item in claims)
+                {
+                    System.Console.WriteLine(item);
+                }
+            }
+
+            return true;
         }
 
     }

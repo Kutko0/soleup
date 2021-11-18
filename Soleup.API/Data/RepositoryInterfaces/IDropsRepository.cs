@@ -22,5 +22,8 @@ namespace Soleup.API.Data.RepositoryInterfaces
         bool ResetDropSession();
         bool IsUserEmailInserted(string email);
         bool HasUserItem(int id);
+        DropAdmin DropAdminLogin(string name, string hashedPassword);
+        DropAdmin InsertDropAdmin(DropAdmin admin);
+        bool RemoveDropAdmin(string name, string hashedPassword);
     }
 }

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using dotenv.net;
 
 namespace Soleup.API.Data
 {
@@ -131,7 +132,7 @@ namespace Soleup.API.Data
         public string GetHashedPassword(string password) {
             // Getting salt from config
             // TODO: load from env file in future
-            string salt = this._config.GetSection("PASSWORD_SALT").Value;
+            string salt = DotEnv.Read()["SALT_PASS"];
             string toHashPassword = password + salt;
 
             //Converting string to bytes and hasing it with Sha512 and then encoding it to string 

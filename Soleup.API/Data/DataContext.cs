@@ -17,6 +17,7 @@ namespace Soleup.API.Data
         public DbSet<PostType> PostTypes {get; set;}
         public DbSet<DropItem> DropItems {get; set;}
         public DbSet<DropUser> DropUsers {get; set;}
+        public DbSet<DropAdmin> DropAdmins {get; set;}
         
     }
 }

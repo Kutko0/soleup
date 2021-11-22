@@ -20,21 +20,20 @@ namespace Soleup.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes="Bearer")]
+    //[Authorize(AuthenticationSchemes="Bearer")]
     public class DropsController : ControllerBase
     {
         private IDropsRepository _repo { get; set; }
         private IConfiguration _config;  
-        private string TOKEN_SECRET;
-        private string SOLEUP_EMAIL_ADDRESS;
+        private static string  TOKEN_SECRET = DotEnv.Read()["TOKEN_SECRET"];
+        private static string SOLEUP_EMAIL_ADDRESS = DotEnv.Read()["SOLEUP_EMAIL_ADDRESS"];
         private static readonly object locker = new Object(); 
+        private static string DOMAIN = DotEnv.Read()["DOMAIN"];
 
         public DropsController(IDropsRepository repo, IConfiguration config)
         {
             this._repo = repo;
             this._config = config;
-            this.TOKEN_SECRET = DotEnv.Read()["TOKEN_SECRET"];
-            this.SOLEUP_EMAIL_ADDRESS = DotEnv.Read()["SOLEUP_EMAIL_ADDRESS"];
         }
 
         [HttpPost]
@@ -59,12 +58,13 @@ namespace Soleup.API.Controllers
                 user.Token = ToHex(shaM.ComputeHash(dataForToken), false);
             }
 
-            var created = this._repo.InsertDropUser(user);
+            DropUser created = this._repo.InsertDropUser(user);
+            string userUrlForDropAccess = DOMAIN + "user/enroll/" + created.Token;
 
             // TODO: finish emails to work on server side
             //SendConfirmationEmail(created.Email, created.Token, created.Instagram);
 
-            return Ok(new ResponseWithObject{ Message = "User created", Item = created});
+            return Ok(new ResponseWithObject{ Message = "User created", Item = new {user = created, userUrl = userUrlForDropAccess}});
         }
 
         [HttpGet]
@@ -74,6 +74,9 @@ namespace Soleup.API.Controllers
             IEnumerable<DropUser> users = this._repo.GetAllDropUsers();
             return Ok(new ResponseWithObject{Message = "All users returned", Item = users});
         }
+
+        [HttpGet]
+        [Route("user/winners")]
 
         [HttpPost]
         [Route("item/new")]
@@ -92,6 +95,7 @@ namespace Soleup.API.Controllers
 
         [HttpGet]
         [Route("item/all")]
+        [AllowAnonymous]
         [Description("Gets all drop items")]
         public IActionResult GetAllItems()
         {
@@ -118,14 +122,18 @@ namespace Soleup.API.Controllers
         [Description("Deletes all items from session, meaning all users and items gets deleted")]
         public IActionResult PostResetSession()
         {
-            this.IsAdmin();
+            if(!this.IsAdmin()) {
+                return BadRequest(new ResponseWithObject{ Message = "Account does not have a admin privileges."});
+            }
+            
             bool removed = this._repo.ResetDropSession();
 
-            return Ok(new ResponseWithObject{ Message = "Session reseted, DB is clean", Item = removed});
+            return Ok(new ResponseWithObject{ Message = "Session was reset, DB is clean", Item = removed});
         }
 
         [HttpPost]
         [Route("admin/login")]
+        [AllowAnonymous]
         [Description("Logs in an admin in order to perform tasks")]
         public IActionResult PostAdminLogin(string name, string password)
         {
@@ -162,11 +170,12 @@ namespace Soleup.API.Controllers
             AuthTokenService tokenGenerator = new AuthTokenService(this._config);
             string token = tokenGenerator.GenerateSecurityToken("admin", true);
 
-            return Ok(new ResponseWithObject{ Message = "Admin logged in succesfully", Item = admin});
+            return Ok(new ResponseWithObject{ Message = "Admin logged in succesfully", Item = admin, JwtToken = token});
         }
 
         [HttpPost]
         [Route("user/enroll/{token}")]
+        [AllowAnonymous]
         [Description("Checks the validity of the token and returns user's data")]
         public async Task<IActionResult> PostEnrollToken(string token)
         {
@@ -181,6 +190,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("item/take")]
+        [AllowAnonymous]
         [Description("Reserves item for user by token")]
         public IActionResult PostTakeItemByToken(TakeDropItem take)
         {
@@ -281,19 +291,13 @@ namespace Soleup.API.Controllers
 
         private bool IsAdmin() {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
-            var UserClaims = ClaimsPrincipal.Current.Identities.First().Claims.ToList();
-            System.Console.WriteLine(UserClaims.FirstOrDefault( x => x.Type.Equals("admin_allowed_in")).Value);
 
             if (identity != null)
             {
-                IEnumerable<Claim> claims = identity.Claims;
-                foreach (var item in claims)
-                {
-                    System.Console.WriteLine(item);
-                }
+                return identity.Claims.FirstOrDefault( x => x.Type.Equals("admin_allowed_in")).Value == "True";
             }
 
-            return true;
+            return false;
         }
 
     }

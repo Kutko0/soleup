@@ -19,11 +19,13 @@ namespace Soleup.API.Data
 
         public DropItem AssignDropUserToDropItem(string userToken, DropItem item)
         {
-            DropItem updated = this._context.DropItems.First(x => x.Id == item.Id);
-            updated.UserToken = userToken;
+            DropItem itemUpdated = this._context.DropItems.First(x => x.Id == item.Id);
+            DropUser userUpdated = this._context.DropUsers.First(x => x.Token == userToken);
+            itemUpdated.UserToken = userToken;
+            userUpdated.WonItemId = itemUpdated.Id;
 
             this._context.SaveChanges();
-            return updated;
+            return itemUpdated;
         }
 
         public DropAdmin DropAdminLogin(string name, string hashedPassword)
@@ -44,14 +46,7 @@ namespace Soleup.API.Data
 
         public IEnumerable<DropUser> GetAllDropUsersThatWonItem()
         {
-            List<DropItem> listOfItemsWithUser = this._context.DropItems.Where(x => x.UserToken != null).ToList();
-            List<DropUser> winners = new List<DropUser>();
-
-            foreach (var item in listOfItemsWithUser)
-            {
-                winners.Add(this._context.DropUsers.FirstOrDefault(x => x.Token == item.UserToken));    
-            }
-
+            List<DropUser> winners = this._context.DropUsers.Where(x => x.WonItemId != -1).ToList();
             return winners;
         }
 
@@ -73,12 +68,6 @@ namespace Soleup.API.Data
         public async Task<DropUser> GetDropUserByToken(string token)
         {
             return await this._context.DropUsers.FirstOrDefaultAsync(x => x.Token == token);
-        }
-
-        public bool HasUserItem(int id)
-        {
-            var user = this._context.DropUsers.FirstOrDefault(x => x.Id == id);
-            return this._context.DropItems.FirstOrDefault(x => x.UserToken == user.Token) != null;
         }
 
         public DropAdmin InsertDropAdmin(DropAdmin admin)

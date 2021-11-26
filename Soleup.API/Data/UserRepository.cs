@@ -130,10 +130,9 @@ namespace Soleup.API.Data
 
         // HELPER FUNCTIONS
         public string GetHashedPassword(string password) {
-            // Getting salt from config
-            // TODO: load from env file in future
-            string salt = DotEnv.Read()["SALT_PASS"];
-            string toHashPassword = password + salt;
+            // Getting pepper from config
+            string pepper = DotEnv.Read()["PEPPER"];
+            string toHashPassword = password + pepper;
 
             //Converting string to bytes and hasing it with Sha512 and then encoding it to string 
             SHA512 shaM = new SHA512Managed();

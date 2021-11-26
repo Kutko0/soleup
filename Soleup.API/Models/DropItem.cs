@@ -13,7 +13,7 @@ namespace Soleup.API.Models
         public string UserToken { get; set; }
         public string Description { get; set; }
         [Required]
-        public int Price { get; set; }
+        public double Price { get; set; }
     }
 
 }

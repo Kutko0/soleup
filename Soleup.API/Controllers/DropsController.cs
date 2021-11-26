@@ -186,14 +186,13 @@ namespace Soleup.API.Controllers
         public async Task<IActionResult> PostEnrollToken(string token)
         {
             DropUser user = await this._repo.GetDropUserByToken(token);
-            
             string jwtToken = tokenGenerator.GenerateSecurityToken(user.Email, false);
 
             if(user != null) {
-                return Ok(new ResponseWithObject{ Message = "Token is valid", Item = user});
+                return Ok(new ResponseWithObject{ Message = "Token is valid", Item = user, JwtToken = token});
             }
 
-            return BadRequest(new ResponseWithObject{ Message = "Token is invalid", Item = user, JwtToken = token});
+            return BadRequest(new ResponseWithObject{ Message = "Token is invalid", Item = user});
         }
 
         [HttpPost]

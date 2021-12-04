@@ -24,8 +24,6 @@ namespace Soleup.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IDropsRepository, DropsRepository>();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddTokenAuthentication(Configuration);

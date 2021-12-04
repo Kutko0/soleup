@@ -31,6 +31,7 @@ namespace Soleup.API
             services.AddControllers();
 
             // Register the Swagger services
+            services.AddSwaggerGen();
             services.AddSwaggerDocument();
         }
 

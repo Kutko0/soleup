@@ -20,7 +20,7 @@ namespace Soleup.API.Services
             _secret = DotEnv.Read()["TOKEN_SECRET"];  
             _issuer = DotEnv.Read()["ISSUER_LOCAL"];
             _audience = DotEnv.Read()["AUDIENCE_LOCAL"];
-            _expDate = config.GetSection("AuthTokenConfig").GetSection("EXPIRES_IN_HOUR").Value;  
+            _expDate = DotEnv.Read()["EXPIRES_IN_HOUR"];
         }  
   
         public string GenerateSecurityToken(string email, bool admin)  

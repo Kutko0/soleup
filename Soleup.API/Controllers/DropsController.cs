@@ -81,8 +81,8 @@ namespace Soleup.API.Controllers
         [AllowAnonymous]
         [Description("Get all drop users that won the item")]
         public IActionResult GetAllDropWinners() {
-            IEnumerable<DropUser> users = this._repo.GetAllDropUsers();
-            return Ok(new ResponseWithObject{Message = "All users returned", Item = users});
+            IEnumerable<DropUser> users = this._repo.GetAllDropUsersThatWonItem();
+            return Ok(new ResponseWithObject{Message = "All users with won item returned", Item = users});
         }
 
         [HttpPost]
@@ -144,7 +144,6 @@ namespace Soleup.API.Controllers
         [Description("Logs in an admin in order to perform tasks")]
         public IActionResult PostAdminLogin(string name, string password)
         {
-            password = password + DotEnv.Read()["PEPPER"];
             SHA512 shaM = new SHA512Managed();
             string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(password)));
 
@@ -160,6 +159,7 @@ namespace Soleup.API.Controllers
 
         [HttpPost]
         [Route("admin/login/initiate")]
+        [AllowAnonymous]
         [Description("Used for making initial admin account, afterwards this method will be removed in production")]
         public IActionResult PostAdminLoginMock()
         {
@@ -185,10 +185,9 @@ namespace Soleup.API.Controllers
         public async Task<IActionResult> PostEnrollToken(string token)
         {
             DropUser user = await this._repo.GetDropUserByToken(token);
-            string jwtToken = tokenGenerator.GenerateSecurityToken(user.Email, false);
 
             if(user != null) {
-                return Ok(new ResponseWithObject{ Message = "Token is valid", Item = user, JwtToken = token});
+                return Ok(new ResponseWithObject{ Message = "Token is valid", Item = user});
             }
 
             return BadRequest(new ResponseWithObject{ Message = "Token is invalid", Item = user});
@@ -210,7 +209,12 @@ namespace Soleup.API.Controllers
                 }
 
                 if(user.WonItemId > -1) {
-                    return BadRequest(new ResponseWithObject{ Message = "Item taken *wink"});
+
+                    if(item.UserToken == take.Token) {
+                        return BadRequest(new ResponseWithObject{ Message = "You have won this item."});
+                    }
+
+                    return BadRequest(new ResponseWithObject{ Message = "Item taken"});
                 }
                 
                 if(item == null) {

@@ -14,7 +14,7 @@ namespace Soleup.API.Services
             string secret = DotEnv.Read()["TOKEN_SECRET"];  
             byte[] key = Encoding.ASCII.GetBytes(secret);  
             string _issuer = DotEnv.Read()["ISSUER_LOCAL"];
-    	    string _audience = DotEnv.Read()["ISSUER_LOCAL"];
+    	    string _audience = DotEnv.Read()["AUDIENCE_LOCAL"];
   
             services.AddAuthentication(x =>  
             {  

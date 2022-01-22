@@ -19,6 +19,7 @@ using Soleup.API.Services;
 namespace Soleup.API.Controllers
 {
     [ApiController]
+    [Route("api/[controller]")]
     //[Authorize(AuthenticationSchemes="Bearer")]
     public class DropsController : ControllerBase
     {

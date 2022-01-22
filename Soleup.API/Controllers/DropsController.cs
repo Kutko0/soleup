@@ -143,17 +143,17 @@ namespace Soleup.API.Controllers
         [Route("admin/login")]
         [AllowAnonymous]
         [Description("Logs in an admin in order to perform tasks")]
-        public IActionResult PostAdminLogin(string name, string password)
+        public IActionResult PostAdminLogin(AdminDTO dto)
         {
             SHA512 shaM = new SHA512Managed();
-            string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(password)));
+            string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(dto.Password)));
 
-            DropAdmin admin = this._repo.DropAdminLogin(name, hashedPass);
+            DropAdmin admin = this._repo.DropAdminLogin(dto.Name, hashedPass);
             if(admin == null) {
                 return BadRequest(new ResponseWithObject{ Message = "Incorrect admin login"});
             }
 
-            string token = tokenGenerator.GenerateSecurityToken(name, true);
+            string token = tokenGenerator.GenerateSecurityToken(dto.Name, true);
 
             return Ok(new ResponseWithObject{ Message = "Admin logged in succesfully", Item = admin, JwtToken = token});
         }

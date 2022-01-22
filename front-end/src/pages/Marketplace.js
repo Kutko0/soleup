@@ -4,11 +4,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import  Market  from '../Components/marketplace-components/market-store'
 import {BrowserRouter as Router, Route, Switch, Redirect, useLocation} from 'react-router-dom';
 import Footer from "../Components/marketplace-components/footer";
+import Admin from "../Components/admin.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      backgroundColor: "white",
+      backgroundColor: "#F0F0F0",
       alignContent: "center",
+      overflowX: "hidden"
     },
     navigation: {
         marginLeft: "auto",
@@ -40,6 +42,9 @@ let MarketplacePage = function(){
         <MarketplaceNavigation className={classes.navigation} />
         <Container>
           <Switch>
+            <Route exact path="/admin">
+              <Admin/>
+            </Route>
             <Route exact path="/*">
               <Market location={location}></Market>
             </Route>

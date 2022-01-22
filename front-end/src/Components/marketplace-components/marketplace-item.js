@@ -21,9 +21,9 @@ const useStyles = makeStyles((theme) => ({
     root: {
       width: 270,
       height: 360,
-      border: "outset",
-      borderWidth: "1px",
-      boxShadow: "none"
+      border: "none",
+      boxShadow: "none",
+      backgroundColor: "#F0F0F0",
     },
     title: {
       fontSize: 11.7,
@@ -129,12 +129,7 @@ let MarketplaceItem = (props) => {
         .catch(error => {
           console.log(error.response.data.message)
           //the error message is the same, regardless if the item is taken || user already bought an item.
-          if(error.response.data.message = "Item was already taken."){
-            changeMessage("The item has already been taken");
-          }
-          else {
-            changeMessage("You already bought an item.")
-          }
+          changeMessage(error.response.data.message);
           setState(true);
           showBar(false);
         })
@@ -170,7 +165,7 @@ let MarketplaceItem = (props) => {
                     {props.price}.99€
                 </Typography>
                 <CardActions className={classes.button}>
-                  <Button disabled={ disableBuyButton } size="medium" onClick={handleClickOpen}> PURCHASE</Button>
+                  <Button disabled={ disableBuyButton } size="medium" onClick={handleClickOpen}> PURCHASE THAT DRIP</Button>
                 </CardActions>
                   <Dialog
                     maxWidth="xs"

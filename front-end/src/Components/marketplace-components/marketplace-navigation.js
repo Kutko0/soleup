@@ -3,16 +3,21 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from "@material-ui/core";
 import {Link} from 'react-router-dom';
 import React from 'react';
-
+import { CardMedia } from '@material-ui/core';
+import dropsWithDripsLogo from '../../Images/dropsWithDripsLogo.jpg'
+import MediaQuery from 'react-responsive';
 const useStyles = makeStyles((theme) => ({
     root: {
-      height: "100px",
-      marginTop: "10px",
-      margin: "auto"
+      height: "110px",
+      margin: "auto",
+      backgroundColor: "black"
     },
     center: {
       margin: "auto",
       textAlign: "center"
+    },
+    media: {
+      height: "100px",
     },
     title: {
       fontSize: 14,
@@ -56,26 +61,20 @@ let MarketplaceNavigation = function(){
     const classes = useStyles()
     return(
         <div className={classes.root}>
-            <CardActions>
-              <Typography variant="h3" style={{fontFamily: 'Oswald', fontWeight: 'bold'}}>
-                SoleUP
-              </Typography>
-              <Grid container
-                direction="row"
-                justify="flex-start"
-                alignItems="center"
+            <MediaQuery minDeviceWidth={550}>
+              <img
+                src={dropsWithDripsLogo}
+
               >
-                <div className={classes.divider}></div>
-                <Grid item  className={classes.gridItem}>
-                  <Link to="/" className={classes.link}>
-                    <Typography className={classes.textDecor}>
-                      FCFS Raffles
-                    </Typography>
-                  </Link>
-                </Grid>
-                <div className={classes.divider}></div>
-              </Grid>
-            </CardActions>
+              </img>
+            </MediaQuery>
+            <MediaQuery maxDeviceWidth={550}>
+              <img
+                src={dropsWithDripsLogo}
+                width="320"
+              >
+              </img>
+            </MediaQuery>
         </div>
     )
 }

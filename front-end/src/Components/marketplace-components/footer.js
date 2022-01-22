@@ -39,26 +39,10 @@ let Footer = function() {
                 CONTANT US
               </Typography>
               <Typography className={classes.text}>
-                Reach us at dripshub@gmail.com.
-              </Typography>
-            </div>
-            </Grid>
-            <Grid item>
-            <div className={classes.div}>
-              <Typography className={classes.text}>
-                LINKS
+                Reach us at dripshub@gmail.com
               </Typography>
               <Typography className={classes.text}>
-                  Dripshub
-              </Typography>
-              <Typography className={classes.text}>
-                  F.A.Q
-              </Typography>
-              <Typography className={classes.text}>
-                  Shipping Policy
-              </Typography>
-              <Typography className={classes.text}>
-                  Terms of Service
+                instagram.nigga
               </Typography>
             </div>
             </Grid>

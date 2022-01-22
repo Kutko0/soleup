@@ -5,6 +5,8 @@ import {Grid} from "@material-ui/core"
 import axios from "axios";
 import {useEffect, useState} from "react";
 import {GET_ALL_DROP_ITEMS, POST_DROP_USER_ENROLL} from "../../apiCalls/apiUrl.js";
+//import {BrowserView, MobileView} from 'react-device-detect';
+import MediaQuery from 'react-responsive';
 //import {checkToken} from "../../apiCalls/apiUrl.js";
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
       },
     div: {
       margin: "auto",
-      width: "1300px",
+      width: "auto",
       padding: "10px",
       heigth: "1300px",
       justifyContent: "center"
@@ -47,7 +49,7 @@ let Market = (props) => {
       }
     })
     .then((response) => {
-      setItems(response.data.item.result);
+      setItems(response.data.item);
     })
     .catch((error) => {
       console.debug(error)
@@ -57,8 +59,15 @@ let Market = (props) => {
 
     return (
         <div className={style.div}>
-          <Typography>/ Drop Week 0</Typography>
-          <Typography>Every Saturday we sell items at retail prices, at the basis of first come first served!</Typography>
+          <Typography>Drop Week 0</Typography>
+          <MediaQuery maxDeviceWidth={700}>
+            <Typography>Every Saturday we sell items</Typography>
+            <Typography>at retail prices, at the basis</Typography>
+            <Typography>of first come first served!</Typography>
+          </MediaQuery>
+          <MediaQuery minDeviceWidth={700}>
+            <Typography>Every Saturday we sell items at retail prices, at the basis of first come first served!</Typography>
+           </MediaQuery>
           <Grid container spacing={4} className={style.grid}>
               {items.map((gridItem) =>(
                 <Grid item>

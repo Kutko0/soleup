@@ -5,6 +5,7 @@ import  Market  from '../Components/marketplace-components/market-store'
 import {BrowserRouter as Router, Route, Switch, Redirect, useLocation} from 'react-router-dom';
 import Footer from "../Components/marketplace-components/footer";
 import Admin from "../Components/admin.js";
+import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
       position: 'relative', //Here is the trick
       width: "100%",
       bottom: 0,
+      marginTop: "200px"
     }
 
 }));
@@ -36,6 +38,11 @@ let MarketplacePage = function(){
     //console.debug(pathname)
     //console.debug("MarketplacePage")
     //console.debug(location);
+
+    useEffect(() => {
+      document.title = "Drops with Drips";
+    }, [])
+
     return(
     <div className={classes.root}>
       <Router>

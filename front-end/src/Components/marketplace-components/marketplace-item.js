@@ -9,8 +9,7 @@ import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import axios from 'axios';
-import { POST_DROP_ITEM_TAKE, GET_ALL_DROP_USERS, POST_DROP_USER_ENROLL, checkToken } from "../../apiCalls/apiUrl.js";
-import {useLocation} from 'react-router-dom';
+import { POST_DROP_ITEM_TAKE, POST_DROP_USER_ENROLL } from "../../apiCalls/apiUrl.js";
 import Snackbar from '@material-ui/core/Snackbar';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
@@ -162,7 +161,7 @@ let MarketplaceItem = (props) => {
                     {props.description}
                 </Typography>
                 <Typography variant="subtitle1" gutterBottom style={{textAlign: "left"}}>
-                    {props.price}.99€
+                    {props.price}
                 </Typography>
                 <CardActions className={classes.button}>
                   <Button disabled={ disableBuyButton } size="medium" onClick={handleClickOpen}> PURCHASE THAT DRIP</Button>

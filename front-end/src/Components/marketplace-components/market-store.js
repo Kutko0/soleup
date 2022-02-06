@@ -4,10 +4,8 @@ import MarketplaceItem from "../marketplace-components/marketplace-item"
 import {Grid} from "@material-ui/core"
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {GET_ALL_DROP_ITEMS, POST_DROP_USER_ENROLL} from "../../apiCalls/apiUrl.js";
-//import {BrowserView, MobileView} from 'react-device-detect';
+import {GET_ALL_DROP_ITEMS} from "../../apiCalls/apiUrl.js";
 import MediaQuery from 'react-responsive';
-//import {checkToken} from "../../apiCalls/apiUrl.js";
 
 const useStyles = makeStyles((theme) => ({
     root: {

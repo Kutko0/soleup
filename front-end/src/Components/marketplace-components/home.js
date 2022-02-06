@@ -1,7 +1,6 @@
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import { Paper } from '@material-ui/core';
 import  Market  from '../marketplace-components/market-store'
 import { CardMedia } from '@material-ui/core';
 

@@ -6,6 +6,7 @@ export const GET_ALL_DROP_USERS = URL + "/api/Drops/user/all";
 export const POST_DROP_ITEM_TAKE = URL + "/api/Drops/item/take";
 export const POST_DROP_USER_ENROLL = URL + "/api/Drops/user/enroll";
 export const POST_DROP_ITEM_NEW = URL + "/api/Drops/item/new"
+export const POST_DROP_USER_NEW = URL + "/api/Drops/user/new"
 export const POST_ADMIN_LOGIN = URL + "/api/Drops/admin/login"
 
 export async function checkToken(token) {

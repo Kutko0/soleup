@@ -1,20 +1,17 @@
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Table } from '@material-ui/core';
 import {TableBody} from '@material-ui/core';
 import {TableCell} from '@material-ui/core';
-import TableContainer from '@material-ui/core';
 import {TableHead} from '@material-ui/core';
 import {TableRow} from '@material-ui/core';
-import Paper from '@material-ui/core';
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {GET_ALL_DROP_ITEMS, GET_ALL_DROP_USERS, POST_ADMIN_LOGIN, POST_DROP_ITEM_NEW} from "../apiCalls/apiUrl.js";
+import {GET_ALL_DROP_ITEMS, GET_ALL_DROP_USERS, POST_ADMIN_LOGIN, POST_DROP_ITEM_NEW, POST_DROP_USER_NEW} from "../apiCalls/apiUrl.js";
 import {Button} from '@material-ui/core';
 import Dialog from '@material-ui/core/Dialog';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import { CardActions, CardMedia, DialogContent } from '@material-ui/core';
+import { DialogContent } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import jwt_decode from "jwt-decode";
 
@@ -114,11 +111,15 @@ let Admin = function() {
 
     function handleUsers() {
       let payload = {
-
+        email: userEmail,
+        instagram: userInstagram
       }
-      axios.post(POST_DROP_ITEM_NEW, payload)
+      axios.post(POST_DROP_USER_NEW, payload)
       .then((response) => {
         console.debug(response)
+        getAllDropUsers()
+        getAllDropItems()
+        handleCloseUsers()
       })
       .catch((error) => {
         console.debug(error)
@@ -306,7 +307,7 @@ let Admin = function() {
                   ></TextField>
                 </Grid>
                 <Grid item xs={12}>
-                  <Button color="secondary" variant="contained">Accept</Button>
+                  <Button color="secondary" variant="contained" onClick={handleUsers}>Accept</Button>
                 </Grid>
               </Grid>
             </DialogContent>
@@ -334,7 +335,7 @@ let Admin = function() {
                 <Grid item xs={12}>
                   <TextField
                     label="Password"
-
+                    type="password"
                     onChange={(e) => {setPassword(e.target.value)}}
                   ></TextField>
                 </Grid>

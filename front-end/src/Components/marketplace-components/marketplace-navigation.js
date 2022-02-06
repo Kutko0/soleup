@@ -1,9 +1,5 @@
-import {  CardActions, Typography } from "@material-ui/core"
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from "@material-ui/core";
-import {Link} from 'react-router-dom';
 import React from 'react';
-import { CardMedia } from '@material-ui/core';
 import dropsWithDripsLogo from '../../Images/dropsWithDripsLogo.jpg'
 import MediaQuery from 'react-responsive';
 const useStyles = makeStyles((theme) => ({

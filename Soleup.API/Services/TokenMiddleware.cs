@@ -11,10 +11,10 @@ namespace Soleup.API.Services
     {  
         public static IServiceCollection AddTokenAuthentication(this IServiceCollection services, IConfiguration config)  
         {  
-            string secret = DotEnv.Read()["TOKEN_SECRET"];  
+            string secret = "!soleupisthebest95875soleupisthebest!";  
             byte[] key = Encoding.ASCII.GetBytes(secret);  
-            string _issuer = DotEnv.Read()["ISSUER_LOCAL"];
-    	    string _audience = DotEnv.Read()["ISSUER_LOCAL"];
+            string _issuer = "localhost";
+    	    string _audience = "dripshub.com";
   
             services.AddAuthentication(x =>  
             {  
@@ -30,7 +30,7 @@ namespace Soleup.API.Services
                     ValidateIssuer = true,  
                     ValidateAudience = true,  
                     ValidIssuer = "localhost",  
-                    ValidAudience = "localhost"  
+                    ValidAudience = "dripshub.com"  
                 };  
             });  
   

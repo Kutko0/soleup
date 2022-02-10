@@ -17,9 +17,9 @@ namespace Soleup.API.Services
   
         public AuthTokenService(IConfiguration config)  
         {  
-            _secret = DotEnv.Read()["TOKEN_SECRET"];  
-            _issuer = DotEnv.Read()["ISSUER_LOCAL"];
-            _audience = DotEnv.Read()["AUDIENCE_LOCAL"];
+            _secret = "!soleupisthebest95875soleupisthebest!";  
+            _issuer = "localhost";
+            _audience = "locahost";
             _expDate = config.GetSection("AuthTokenConfig").GetSection("EXPIRES_IN_HOUR").Value;  
         }  
   

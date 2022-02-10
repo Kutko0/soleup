@@ -24,7 +24,7 @@ namespace Soleup.API.Controllers
     {
         private IDropsRepository _repo { get; set; }
         private IConfiguration _config;  
-        private static string  TOKEN_SECRET = DotEnv.Read()["TOKEN_SECRET"];
+        private static string  TOKEN_SECRET = "!soleupisthebest95875soleupisthebest!";
         private static string SOLEUP_EMAIL_ADDRESS = DotEnv.Read()["SOLEUP_EMAIL_ADDRESS"];
         private static readonly object locker = new Object(); 
         private AuthTokenService tokenGenerator;
@@ -144,7 +144,7 @@ namespace Soleup.API.Controllers
         [Description("Logs in an admin in order to perform tasks")]
         public IActionResult PostAdminLogin(string name, string password)
         {
-            password = password + DotEnv.Read()["PEPPER"];
+            password = password + "soleupisthebest";
             SHA512 shaM = new SHA512Managed();
             string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(password)));
 
@@ -163,7 +163,7 @@ namespace Soleup.API.Controllers
         [Description("Used for making initial admin account, afterwards this method will be removed in production")]
         public IActionResult PostAdminLoginMock()
         {
-            string password = "!ILoveMyDropsWithDrips74" + DotEnv.Read()["PEPPER"];
+            string password = "!ILoveMyDropsWithDrips74" + "soleupisthebest";
             SHA512 shaM = new SHA512Managed();
             string hashedPass = Encoding.UTF8.GetString(shaM.ComputeHash(Encoding.ASCII.GetBytes(password)));
 
